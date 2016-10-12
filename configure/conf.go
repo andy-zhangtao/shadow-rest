@@ -5,4 +5,5 @@ const (
 	HASPORT       = "端口已被占用"
 	DEFAULTPASSWD = "jiubugaosuni"
 	DEFAULTMETHOD = "aes-256-cfb"
+	PORTNOTEXIST  = "指定端口不存在"
 )

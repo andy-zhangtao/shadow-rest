@@ -16,7 +16,7 @@ Forked from shadowsocks/shadowsocks-go
 | /user/all | Get all the proxy |
 | /user/stop/{ports} | Stop specify proxy |
 | /user/restart | Restart specify proxy |
-| /user/rate | Get all the proxy rate |
+| /user/info | Get all the proxy info |
 
 * Misc API
 
@@ -26,7 +26,7 @@ Forked from shadowsocks/shadowsocks-go
 
 
 
-Current version: 1.1.5 [![Build Status](https://travis-ci.org/shadowsocks/shadowsocks-go.png?branch=master)](https://travis-ci.org/shadowsocks/shadowsocks-go)
+<!-- Current version: 1.1.5 [![Build Status](https://travis-ci.org/shadowsocks/shadowsocks-go.png?branch=master)](https://travis-ci.org/shadowsocks/shadowsocks-go) -->
 
 shadowsocks-go is a lightweight tunnel proxy which can help you get through firewalls. It is a port of [shadowsocks](https://github.com/clowwindy/shadowsocks).
 

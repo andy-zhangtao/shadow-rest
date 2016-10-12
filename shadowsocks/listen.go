@@ -15,11 +15,16 @@ import (
 
 var listenMap map[string]Listen
 
+const (
+	TIMEFORMATE = "2006-01-02"
+)
+
 // Listen 网络监听对象
 type Listen struct {
-	Port   string `json:"port"`
-	Rate   int    `json:"rate"`
-	Listen net.Listener
+	Port       string `json:"port"`
+	Rate       int    `json:"rate"`
+	ExpiryDate string `json:"expiry_date"`
+	Listen     net.Listener
 }
 
 // AddListen 添加网络对象
@@ -91,12 +96,12 @@ func GetRate() []*Listen {
 	r := make([]*Listen, 0, len(listenMap))
 	for p := range listenMap {
 		l := listenMap[p]
-		rate := &Listen{
-			Port: p,
-			Rate: l.Rate,
-		}
+		// rate := &Listen{
+		// 	Port: p,
+		// 	Rate: l.Rate,
+		// }
 
-		r = append(r, rate)
+		r = append(r, &l)
 	}
 
 	return r

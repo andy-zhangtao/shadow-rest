@@ -11,6 +11,7 @@ import (
 	"os"
 	"strconv"
 	"syscall"
+	"time"
 )
 
 var debug DebugLog
@@ -33,11 +34,12 @@ const (
 )
 
 var connCnt int
-var nextLogConnCnt int = logCntDelta
+var nextLogConnCnt = logCntDelta
 var listenChan = make(chan *Listen)
 var rateChan = make(chan *Listen)
 var passwdManager = PasswdManager{PortListener: map[string]*PortListener{}}
 
+// GetDebug 用于设置Debug函数
 func GetDebug() DebugLog {
 	return debug
 }
@@ -191,9 +193,11 @@ func Run(port, password, method string, auth bool) {
 	var cipher *Cipher
 	log.Printf("server listening port %v ...\n", port)
 
+	ed := time.Now().AddDate(0, 0, 7).Format(TIMEFORMATE)
 	ls := &Listen{
-		Port:   port,
-		Listen: ln,
+		Port:       port,
+		Listen:     ln,
+		ExpiryDate: ed,
 	}
 
 	listenChan <- ls
@@ -226,6 +230,7 @@ func Run(port, password, method string, auth bool) {
 	}
 }
 
+// UpdatePasswd 更新链接密钥
 func UpdatePasswd(configFile string, config *Config) {
 	log.Println("updating password")
 	newconfig, err := ParseConfig(configFile)
@@ -253,6 +258,7 @@ func UpdatePasswd(configFile string, config *Config) {
 	log.Println("password updated")
 }
 
+// UnifyPortPassword 确认链接密钥
 func UnifyPortPassword(config *Config) (err error) {
 	if len(config.PortPassword) == 0 { // this handles both nil PortPassword and empty one
 		if !EnoughOptions(config) {
@@ -269,12 +275,12 @@ func UnifyPortPassword(config *Config) (err error) {
 	return
 }
 
+// EnoughOptions 确认参数是否完整
 func EnoughOptions(config *Config) bool {
 	return config.ServerPort != 0 && config.Password != ""
 }
 
-// HandleListen
-// 控制每个网络链接
+// HandleListen 控制每个网络链接
 func HandleListen() {
 	for {
 		select {
@@ -284,8 +290,7 @@ func HandleListen() {
 	}
 }
 
-// HandleRate
-// 统计每个端口的流出流量
+// HandleRate 统计每个端口的流出流量
 func HandleRate() {
 	for {
 		select {

@@ -1,10 +1,3 @@
-/**
- * Created with IntelliJ IDEA.
- * User: clowwindy
- * Date: 12-11-2
- * Time: 上午10:31
- * To change this template use File | Settings | File Templates.
- */
 package shadowsocks
 
 import (
@@ -18,6 +11,7 @@ import (
 	"time"
 )
 
+// Config 网络链接配置信息
 type Config struct {
 	Server     interface{} `json:"server"`
 	ServerPort int         `json:"server_port"`
@@ -39,6 +33,7 @@ type Config struct {
 
 var readTimeout time.Duration
 
+// GetServerArray 获取当前所有服务参数
 func (config *Config) GetServerArray() []string {
 	// Specifying multiple servers in the "server" options is deprecated.
 	// But for backward compatiblity, keep this.
@@ -70,6 +65,7 @@ typeError:
 	panic(fmt.Sprintf("Config.Server type error %v", reflect.TypeOf(config.Server)))
 }
 
+// ParseConfig 解析配置文件数据
 func ParseConfig(path string) (config *Config, err error) {
 	file, err := os.Open(path) // For read access.
 	if err != nil {
@@ -94,12 +90,12 @@ func ParseConfig(path string) (config *Config, err error) {
 	return
 }
 
+// SetDebug 设置输出日志级别
 func SetDebug(d DebugLog) {
 	Debug = d
 }
 
-// Useful for command line to override options specified in config file
-// Debug is not updated.
+//  UpdateConfig  Useful for command line to override options specified in config file Debug is not updated.
 func UpdateConfig(old, new *Config) {
 	// Using reflection here is not necessary, but it's a good exercise.
 	// For more information on reflections in Go, read "The Laws of Reflection"
