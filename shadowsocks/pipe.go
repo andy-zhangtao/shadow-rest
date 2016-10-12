@@ -15,7 +15,7 @@ func SetReadTimeout(c net.Conn) {
 }
 
 // PipeThenClose copies data from src to dst, closes dst when done.
-func PipeThenClose(src, dst net.Conn, lr *Rate) {
+func PipeThenClose(src, dst net.Conn, lr *Listen) {
 	defer dst.Close()
 	buf := leakyBuf.Get()
 	defer leakyBuf.Put(buf)
@@ -49,7 +49,7 @@ func PipeThenClose(src, dst net.Conn, lr *Rate) {
 }
 
 // PipeThenCloseOta copies data from src to dst, closes dst when done, with ota verification.
-func PipeThenCloseOta(src *Conn, dst net.Conn, lr *Rate) {
+func PipeThenCloseOta(src *Conn, dst net.Conn, lr *Listen) {
 	const (
 		dataLenLen  = 2
 		hmacSha1Len = 10

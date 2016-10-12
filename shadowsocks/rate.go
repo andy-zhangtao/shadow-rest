@@ -9,48 +9,48 @@ package shadowsocks
  */
 
 // Rate 流量类
-type Rate struct {
-	Port string `json:"port"`
-	Rate int    `json:"rate"`
-}
+// type Rate struct {
+// 	Port string `json:"port"`
+// 	Rate int    `json:"rate"`
+// }
 
-var rateMap map[string]int
+// var rateMap map[string]int
 
 // AddRate 按照端口统计流量
-func AddRate(r Rate) {
-	if len(rateMap) == 0 {
-		rateMap = make(map[string]int)
-	}
+// func AddRate(r Rate) {
+// 	if len(rateMap) == 0 {
+// 		rateMap = make(map[string]int)
+// 	}
 
-	rateMap[r.Port] = rateMap[r.Port] + r.Rate
-}
+// 	rateMap[r.Port] = rateMap[r.Port] + r.Rate
+// }
 
 // GetPortRate 获取指定端口流量
-func GetPortRate(port string) *Rate {
-	r := &Rate{
-		Port: port,
-		Rate: rateMap[port],
-	}
+// func GetPortRate(port string) *Rate {
+// 	r := &Rate{
+// 		Port: port,
+// 		Rate: rateMap[port],
+// 	}
 
-	return r
-}
+// 	return r
+// }
 
 // GetRate 获取所有端口流量
-func GetRate() []*Rate {
-	r := make([]*Rate, 0, len(rateMap))
-	for p := range rateMap {
-		rate := &Rate{
-			Port: p,
-			Rate: rateMap[p],
-		}
+// func GetRate() []*Rate {
+// 	r := make([]*Rate, 0, len(rateMap))
+// 	for p := range rateMap {
+// 		rate := &Rate{
+// 			Port: p,
+// 			Rate: rateMap[p],
+// 		}
 
-		r = append(r, rate)
-	}
+// 		r = append(r, rate)
+// 	}
 
-	return r
-}
+// 	return r
+// }
 
 // ClearPortRate 端口流量清零
-func ClearPortRate(port string) {
-	rateMap[port] = 0
-}
+// func ClearPortRate(port string) {
+// 	rateMap[port] = 0
+// }

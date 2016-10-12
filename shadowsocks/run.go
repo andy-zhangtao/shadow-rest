@@ -35,7 +35,7 @@ const (
 var connCnt int
 var nextLogConnCnt int = logCntDelta
 var listenChan = make(chan *Listen)
-var rateChan = make(chan *Rate)
+var rateChan = make(chan *Listen)
 var passwdManager = PasswdManager{PortListener: map[string]*PortListener{}}
 
 func GetDebug() DebugLog {
@@ -107,7 +107,7 @@ func getRequest(conn *Conn, auth bool) (host string, ota bool, err error) {
 }
 
 // HandleConnection 处理具体链接数据
-func HandleConnection(conn *Conn, auth bool, lr *Rate) {
+func HandleConnection(conn *Conn, auth bool, lr *Listen) {
 	var host string
 
 	connCnt++ // this maybe not accurate, but should be enough
@@ -198,7 +198,7 @@ func Run(port, password, method string, auth bool) {
 
 	listenChan <- ls
 
-	lr := &Rate{
+	lr := &Listen{
 		Port: port,
 		Rate: 0,
 	}
