@@ -27,7 +27,7 @@ type ProxyAddr struct {
 var ErrNilCipher = errors.New("cipher can't be nil.")
 
 func NewDialer(server string, cipher *Cipher) (dialer *Dialer, err error) {
-	// Currently shadowsocks-go do not support UDP
+	// Currently shadow-rest do not support UDP
 	if cipher == nil {
 		return nil, ErrNilCipher
 	}

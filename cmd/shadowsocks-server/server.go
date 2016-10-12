@@ -13,8 +13,8 @@ import (
 
 	"github.com/gorilla/mux"
 
-	ss "shadowsocks-go/shadowsocks"
-	"shadowsocks-go/shadowsocks/handler"
+	ss "shadow-rest/shadowsocks"
+	"shadow-rest/shadowsocks/handler"
 )
 
 func waitSignal(configFile string, config *ss.Config) {

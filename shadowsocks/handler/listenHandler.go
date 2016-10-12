@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"shadowsocks-go/configure"
-	ss "shadowsocks-go/shadowsocks"
+	"shadow-rest/configure"
+	ss "shadow-rest/shadowsocks"
 	"strings"
 
 	"github.com/andy-zhangtao/Sandstorm"

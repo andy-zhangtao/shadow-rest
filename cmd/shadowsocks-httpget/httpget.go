@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"os"
 	"runtime"
-	ss "shadowsocks-go/shadowsocks"
+	ss "shadow-rest/shadowsocks"
 	"strconv"
 	"strings"
 	"time"
