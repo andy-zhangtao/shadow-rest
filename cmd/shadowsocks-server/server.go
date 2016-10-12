@@ -97,6 +97,8 @@ func main() {
 	go ss.HandleListen()
 	// 统计端口数据流量
 	go ss.HandleRate()
+	// 网络链接失效期判断
+	go ss.IsExpiry()
 
 	// 重新加载配置文件
 	go waitSignal(configFile, config)

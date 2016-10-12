@@ -3,6 +3,9 @@ package shadowsocks
 import (
 	"errors"
 	"shadow-rest/configure"
+	"time"
+
+	"github.com/andy-zhangtao/golog"
 )
 
 /**
@@ -14,11 +17,42 @@ import (
  */
 
 // IsExpiry 当前链接是否有效
+func IsExpiry() {
+	for {
+		now := time.Now()
+		next := now.Add(time.Hour * 24)
+		next = time.Date(next.Year(), next.Month(), next.Day(), 0, 0, 0, 0, next.Location())
+		t := time.NewTimer(next.Sub(now))
+		select {
+		case <-t.C:
+			for p := range listenMap {
+				l := listenMap[p]
+				ie, err := isExpiry(l)
+				if err != nil {
+					golog.Debug(err.Error())
+					l.Listen.Close()
+				} else {
+					if ie {
+						golog.Debug(l.Port, "被关闭", l.ExpiryDate)
+						l.Listen.Close()
+					}
+				}
+			}
+		}
+	}
+}
+
+// isExpiry 当前链接是否有效
 // True 失效
 // False 有效
-// func IsExpiry(l *Listen) bool {
-//
-// }
+func isExpiry(l Listen) (bool, error) {
+	curr := time.Now()
+	expiry, err := time.Parse(TIMEFORMATE, l.ExpiryDate)
+	if err != nil {
+		return true, err
+	}
+	return expiry.Before(curr), nil
+}
 
 // SetExpiry 设置指定网络链接有效期 @port 指定网络链接端口 @d 调整后的失效日期，只能为YYYY-MM-DD格式
 func SetExpiry(port string, d string) error {

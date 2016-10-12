@@ -16,6 +16,7 @@ Forked from shadowsocks/shadowsocks-go
 | /user/all | Get all the proxy |
 | /user/stop/{ports} | Stop specify proxy |
 | /user/restart | Restart specify proxy |
+| /user/expiry | Modify specify proxy expiry date |
 | /user/info | Get all the proxy info |
 
 * Misc API
