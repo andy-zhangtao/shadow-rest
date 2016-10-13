@@ -5,7 +5,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"shadow-rest/configure"
-	ss "shadow-rest/shadowsocks"
+
+	ss "github.com/andy-zhangtao/shadow-rest/shadowsocks"
 
 	"github.com/andy-zhangtao/Sandstorm"
 )

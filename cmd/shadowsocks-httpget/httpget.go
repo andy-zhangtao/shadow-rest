@@ -10,10 +10,11 @@ import (
 	"net/url"
 	"os"
 	"runtime"
-	ss "shadow-rest/shadowsocks"
 	"strconv"
 	"strings"
 	"time"
+
+	ss "github.com/andy-zhangtao/shadow-rest/shadowsocks"
 )
 
 var config struct {

@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	ss "shadow-rest/shadowsocks"
+	ss "github.com/andy-zhangtao/shadow-rest/shadowsocks"
 )
 
 var debug ss.DebugLog
