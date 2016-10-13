@@ -3,6 +3,8 @@ package shadowsocks
 import (
 	"errors"
 	"net"
+
+	"github.com/andy-zhangtao/shadow-rest/configure"
 )
 
 /**
@@ -51,7 +53,7 @@ func KillListen(port string) error {
 		return nil
 	}
 
-	return errors.New("没有此端口信息")
+	return errors.New(configure.PORTNOTEXIST)
 }
 
 // GetListen 获取指定或者所有的网络链接
