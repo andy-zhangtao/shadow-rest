@@ -2,8 +2,9 @@ package shadowsocks
 
 import (
 	"errors"
-	"shadow-rest/configure"
 	"time"
+
+	"github.com/andy-zhangtao/shadow-rest/configure"
 
 	"github.com/andy-zhangtao/golog"
 )

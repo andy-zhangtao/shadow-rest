@@ -11,7 +11,8 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	ss "shadow-rest/shadowsocks"
+
+	ss "github.com/andy-zhangtao/shadow-rest/shadowsocks"
 
 	"github.com/andy-zhangtao/Sandstorm"
 )
