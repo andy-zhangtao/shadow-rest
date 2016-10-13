@@ -7,4 +7,5 @@ const (
 	DEFAULTPASSWD = "jiubugaosuni"
 	DEFAULTMETHOD = "aes-256-cfb"
 	PORTNOTEXIST  = "指定端口不存在"
+	INVALIDRATE   = "无效的流量参数"
 )
