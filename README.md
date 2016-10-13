@@ -28,7 +28,7 @@ Forked from shadowsocks/shadowsocks-go
 
 
 
-<!-- Current version: 1.1.5 [![Build Status](https://travis-ci.org/shadowsocks/shadowsocks-go.png?branch=master)](https://travis-ci.org/shadowsocks/shadowsocks-go) -->
+shadowsocks-go version: 1.1.5  shadow-rest version: 0.1.X [![Build Status](https://travis-ci.org/andy-zhangtao/shadow-rest.svg?branch=master)
 
 shadowsocks-go is a lightweight tunnel proxy which can help you get through firewalls. It is a port of [shadowsocks](https://github.com/clowwindy/shadowsocks).
 
