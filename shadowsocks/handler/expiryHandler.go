@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"shadow-rest/configure"
+
+	"github.com/andy-zhangtao/shadow-rest/configure"
 
 	ss "github.com/andy-zhangtao/shadow-rest/shadowsocks"
 
