@@ -1,0 +1,11 @@
+language: go
+
+go:
+    - 1.7
+
+install:
+    - go get github.com/gorilla/mux
+    - go get github.com/andy-zhangtao/Sandstorm
+    - go get github.com/andy-zhangtao/golog
+script:
+    - cd script; ./build.sh
