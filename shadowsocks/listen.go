@@ -81,7 +81,15 @@ func IsExists(port string) bool {
 func AddRate(r Listen) {
 	l := listenMap[r.Port]
 	l.Rate = l.Rate + r.Rate
-	listenMap[r.Port] = l
+	// 这里应该为listenMap添加同步锁，但考虑到效率所以再次判断一次
+	tl := listenMap[r.Port]
+	if tl.Port != "" {
+		listenMap[r.Port] = l
+	} else {
+		if tl.Listen != nil {
+			tl.Listen.Close()
+		}
+	}
 }
 
 // GetPortRate 获取指定端口流量
