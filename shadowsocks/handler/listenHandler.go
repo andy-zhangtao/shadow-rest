@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"shadow-rest/configure"
-	ss "shadow-rest/shadowsocks"
 	"strings"
+
+	"github.com/andy-zhangtao/shadow-rest/configure"
+	ss "github.com/andy-zhangtao/shadow-rest/shadowsocks"
 
 	"github.com/andy-zhangtao/Sandstorm"
 	"github.com/gorilla/mux"
