@@ -1,6 +1,13 @@
 package shadowsocks
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/andy-zhangtao/shadow-rest/configure"
+)
 
 /**
  * Created with VScode.
@@ -50,4 +57,46 @@ func ConvertRate(rate int) string {
 // isOK 判断当前流量值是否大于1024. 当大于1024时，返回false，继续换算。反之停止换算
 func isOK(i float64) bool {
 	return i <= 1024
+}
+
+// SetRate 设置网络链接流量上限
+func SetRate(port, rate string) error {
+	l := listenMap[port]
+	if l.Port == "" {
+		return errors.New(configure.PORTNOTEXIST)
+	}
+
+	rate = strings.TrimSpace(rate)
+	tr := []byte(rate)
+	r := tr[len(tr)-2:]
+	v := tr[:len(tr)-2]
+	vv := 0
+	switch strings.ToLower(string(r)) {
+	case "kb":
+		rateVale, err := strconv.Atoi(string(v))
+		if err != nil {
+			return err
+		}
+		vv = rateVale * 1024
+
+	case "mb":
+		rateVale, err := strconv.Atoi(string(v))
+		if err != nil {
+			return err
+		}
+		vv = rateVale * 1024 * 1024
+
+	case "gb":
+		rateVale, err := strconv.Atoi(string(v))
+		if err != nil {
+			return err
+		}
+		vv = rateVale * 1024 * 1024 * 1024
+	default:
+		return errors.New(configure.INVALIDRATE)
+	}
+
+	l.RateLimit = vv
+	listenMap[port] = l
+	return nil
 }

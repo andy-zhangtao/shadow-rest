@@ -10,7 +10,9 @@ package handler
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
+	"shadow-rest/configure"
 
 	ss "github.com/andy-zhangtao/shadow-rest/shadowsocks"
 
@@ -42,4 +44,38 @@ func GetRateHandler(w http.ResponseWriter, r *http.Request) {
 	content, _ := json.Marshal(rate)
 
 	Sandstorm.HTTPSuccess(w, string(content))
+}
+
+// SetRateHandler 设置网络最大流量
+func SetRateHandler(w http.ResponseWriter, r *http.Request) {
+	conf := new(ss.Rate)
+	content, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		Sandstorm.HTTPError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.Unmarshal(content, &conf)
+	if err != nil {
+		Sandstorm.HTTPError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if conf.Port == "" {
+		Sandstorm.HTTPError(w, configure.NOPORT, http.StatusInternalServerError)
+		return
+	}
+
+	if conf.Rate == "" {
+		Sandstorm.HTTPError(w, configure.NORATE, http.StatusInternalServerError)
+		return
+	}
+
+	err = ss.SetRate(conf.Port, conf.Rate)
+	if err != nil {
+		Sandstorm.HTTPError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	Sandstorm.HTTPSuccess(w, "OK")
 }

@@ -25,6 +25,7 @@ type Listen struct {
 	Port       string `json:"port"`
 	Rate       int    `json:"rate"`
 	ExpiryDate string `json:"expiry_date"`
+	RateLimit  int    `json:"rate_limit"`
 	Listen     net.Listener
 }
 
