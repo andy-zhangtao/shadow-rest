@@ -99,6 +99,8 @@ func main() {
 	go ss.HandleRate()
 	// 网络链接失效期判断
 	go ss.IsExpiry()
+	// 网络链接流量判断
+	go ss.IsAboveRate()
 
 	// 重新加载配置文件
 	go waitSignal(configFile, config)

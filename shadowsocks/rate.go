@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/andy-zhangtao/golog"
 
 	"github.com/andy-zhangtao/shadow-rest/configure"
 )
@@ -99,4 +102,24 @@ func SetRate(port, rate string) error {
 	l.RateLimit = vv
 	listenMap[port] = l
 	return nil
+}
+
+// IsAboveRate 判断当前每个链接是否超过指定流量
+func IsAboveRate() {
+	for {
+		ticker := time.NewTicker(1 * time.Minute)
+		for {
+			select {
+			case <-ticker.C:
+				for p := range listenMap {
+					l := listenMap[p]
+					if l.Rate >= l.RateLimit {
+						golog.Debug(l.Port, "被关闭", l.Rate, l.RateLimit)
+						l.Listen.Close()
+						delete(listenMap, p)
+					}
+				}
+			}
+		}
+	}
 }

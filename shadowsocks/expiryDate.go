@@ -32,10 +32,12 @@ func IsExpiry() {
 				if err != nil {
 					golog.Debug(err.Error())
 					l.Listen.Close()
+					delete(listenMap, p)
 				} else {
 					if ie {
 						golog.Debug(l.Port, "被关闭", l.ExpiryDate)
 						l.Listen.Close()
+						delete(listenMap, p)
 					}
 				}
 			}
