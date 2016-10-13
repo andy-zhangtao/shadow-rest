@@ -109,7 +109,8 @@ func main() {
 	r.HandleFunc("/user/stop/{ports}", handler.DeleteListenHandler).Methods(http.MethodDelete)
 	r.HandleFunc("/user/restart", handler.RestartListenHandler).Methods(http.MethodPut)
 	r.HandleFunc("/user/expiry", handler.SetExpiryHandler).Methods(http.MethodPut)
-	r.HandleFunc("/user/info", handler.GetRateHandler).Methods(http.MethodGet)
+	r.HandleFunc("/user/info", handler.GetInfoHandler).Methods(http.MethodGet)
+	r.HandleFunc("/user/rate", handler.GetRateHandler).Methods(http.MethodGet)
 
 	r.HandleFunc("/version", handler.GetVersion).Methods(http.MethodGet)
 

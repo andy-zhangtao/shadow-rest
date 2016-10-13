@@ -16,6 +16,7 @@ import (
 var listenMap map[string]Listen
 
 const (
+	// TIMEFORMATE 默认时间格式
 	TIMEFORMATE = "2006-01-02"
 )
 
@@ -96,11 +97,6 @@ func GetRate() []*Listen {
 	r := make([]*Listen, 0, len(listenMap))
 	for p := range listenMap {
 		l := listenMap[p]
-		// rate := &Listen{
-		// 	Port: p,
-		// 	Rate: l.Rate,
-		// }
-
 		r = append(r, &l)
 	}
 

@@ -1,56 +1,53 @@
 package shadowsocks
 
+import "fmt"
+
 /**
  * Created with VScode.
  * User: andy.zhangtao <ztao8607@gmail.com>
- * Date: 16-10-11
- * Time: 18:03
- * 管理每个端口OUTPUT流量,以字节为单位
+ * Date: 16-10-13
+ * Time: 10:10
+ * 处理流量相关请求
  */
 
-// Rate 流量类
-// type Rate struct {
-// 	Port string `json:"port"`
-// 	Rate int    `json:"rate"`
-// }
+// Rate 流量数据 每次都从Listen中重新获取数据
+type Rate struct {
+	Port string `json:"port"`
+	Rate string `json:"rate"`
+}
 
-// var rateMap map[string]int
+// ConvertRate 流量转换。 Btye --> KB --> MB --> GB
+func ConvertRate(rate int) string {
+	if rate == 0 {
+		return "0KB"
+	}
 
-// AddRate 按照端口统计流量
-// func AddRate(r Rate) {
-// 	if len(rateMap) == 0 {
-// 		rateMap = make(map[string]int)
-// 	}
+	count := 1
+	f := float64(rate)
+	f = f / 1024
 
-// 	rateMap[r.Port] = rateMap[r.Port] + r.Rate
-// }
+	for {
 
-// GetPortRate 获取指定端口流量
-// func GetPortRate(port string) *Rate {
-// 	r := &Rate{
-// 		Port: port,
-// 		Rate: rateMap[port],
-// 	}
+		if isOK(f) {
+			break
+		}
+		count++
+		f = f / 1024
+	}
 
-// 	return r
-// }
+	switch count {
+	case 1:
+		return fmt.Sprintf("%0.3f KB", f)
+	case 2:
+		return fmt.Sprintf("%0.3f MB", f)
+	case 3:
+		return fmt.Sprintf("%0.3f GB", f)
+	default:
+		return fmt.Sprintf("%0.3f Btye", f)
+	}
+}
 
-// GetRate 获取所有端口流量
-// func GetRate() []*Rate {
-// 	r := make([]*Rate, 0, len(rateMap))
-// 	for p := range rateMap {
-// 		rate := &Rate{
-// 			Port: p,
-// 			Rate: rateMap[p],
-// 		}
-
-// 		r = append(r, rate)
-// 	}
-
-// 	return r
-// }
-
-// ClearPortRate 端口流量清零
-// func ClearPortRate(port string) {
-// 	rateMap[port] = 0
-// }
+// isOK 判断当前流量值是否大于1024. 当大于1024时，返回false，继续换算。反之停止换算
+func isOK(i float64) bool {
+	return i <= 1024
+}
