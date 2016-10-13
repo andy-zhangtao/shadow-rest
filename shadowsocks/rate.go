@@ -113,11 +113,15 @@ func IsAboveRate() {
 			case <-ticker.C:
 				for p := range listenMap {
 					l := listenMap[p]
-					if l.Rate >= l.RateLimit {
-						golog.Debug(l.Port, "被关闭", l.Rate, l.RateLimit)
-						l.Listen.Close()
-						delete(listenMap, p)
+					// 0 表示无限制
+					if l.RateLimit != 0 {
+						if l.Rate >= l.RateLimit {
+							golog.Debug(l.Port, "被关闭", l.Rate, l.RateLimit)
+							l.Listen.Close()
+							delete(listenMap, p)
+						}
 					}
+
 				}
 			}
 		}
