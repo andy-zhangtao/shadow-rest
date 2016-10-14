@@ -1,10 +1,15 @@
 package shadowsocks
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"math/rand"
+	"os/user"
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/andy-zhangtao/golog"
 )
 
 /**
@@ -73,6 +78,31 @@ func getNextPort() string {
 			return strconv.Itoa(Currport)
 		}
 		Currport++
+	}
+}
+
+// Persistence 用户数据持久化
+func Persistence() {
+	usr, err := user.Current()
+	if err != nil {
+		golog.Error(err.Error())
+	}
+
+	ticker := time.NewTicker(1 * time.Minute)
+	for {
+		select {
+		case <-ticker.C:
+			data, err := json.Marshal(listenMap)
+			if err != nil {
+				golog.Error(err.Error())
+			}
+
+			err = ioutil.WriteFile(usr.HomeDir+"/user.json", data, 0600)
+			if err != nil {
+				golog.Error(err.Error())
+			}
+		}
+
 	}
 
 }

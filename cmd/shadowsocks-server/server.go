@@ -111,6 +111,8 @@ func main() {
 	go ss.IsExpiry()
 	// 网络链接流量判断
 	go ss.IsAboveRate()
+	// 用户数据持久化
+	go ss.Persistence()
 
 	// 重新加载配置文件
 	go waitSignal(configFile, config)
