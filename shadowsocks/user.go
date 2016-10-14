@@ -29,6 +29,12 @@ type User struct {
 	Password string
 }
 
+// UserPass 将端口和链接口令单独保存
+type UserPass struct {
+	Port     string `json:"port"`
+	Password string `json:"password"`
+}
+
 var (
 	// Minport 默认最低端口从10001开始
 	Minport = 10001
@@ -86,6 +92,7 @@ func Persistence() {
 	usr, err := user.Current()
 	if err != nil {
 		golog.Error(err.Error())
+		return
 	}
 
 	ticker := time.NewTicker(1 * time.Minute)
@@ -102,7 +109,47 @@ func Persistence() {
 				golog.Error(err.Error())
 			}
 		}
+	}
+}
 
+// KillUserPass 当断开链接时，一并删除其口令
+func KillUserPass(port string) {
+	PasswdChan <- &UserPass{
+		Port: port,
+	}
+}
+
+// PersistencePasswd 用户口令持久化
+func PersistencePasswd() {
+	usr, err := user.Current()
+	if err != nil {
+		golog.Error(err.Error())
+		return
 	}
 
+	for {
+		select {
+		case pp := <-PasswdChan:
+			if len(PassMap) == 0 {
+				PassMap = make(map[string]UserPass)
+			}
+
+			if pp.Password == "" {
+				// 删除
+				delete(PassMap, pp.Port)
+			} else {
+				PassMap[pp.Port] = *pp
+			}
+
+			data, err := json.Marshal(PassMap)
+			if err != nil {
+				golog.Error(err.Error())
+			}
+
+			err = ioutil.WriteFile(usr.HomeDir+"/passwd.json", data, 0600)
+			if err != nil {
+				golog.Error(err.Error())
+			}
+		}
+	}
 }

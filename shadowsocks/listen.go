@@ -16,6 +16,7 @@ import (
  */
 
 var listenMap map[string]Listen
+var PassMap map[string]UserPass
 
 const (
 	// TIMEFORMATE 默认时间格式
@@ -50,6 +51,9 @@ func KillListen(port string) error {
 			return err
 		}
 		delete(listenMap, port)
+
+		KillUserPass(port)
+
 		return nil
 	}
 

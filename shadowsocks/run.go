@@ -47,6 +47,9 @@ var rateChan = make(chan *Listen)
 // ConnChan 用于定制网络链接信息
 var ConnChan = make(chan error)
 
+// PasswdChan 用于保存网络链接及其口令
+var PasswdChan = make(chan *UserPass)
+
 var passwdManager = PasswdManager{PortListener: map[string]*PortListener{}}
 
 // GetDebug 用于设置Debug函数
@@ -224,6 +227,12 @@ func RunNew(u *User) {
 	}
 
 	ConnChan <- nil
+
+	PasswdChan <- &UserPass{
+		Port:     u.Port,
+		Password: u.Password,
+	}
+
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
@@ -275,6 +284,11 @@ func Run(port, password, method string, auth bool) {
 	lr := &Listen{
 		Port: port,
 		Rate: 0,
+	}
+
+	PasswdChan <- &UserPass{
+		Port:     port,
+		Password: password,
 	}
 
 	for {

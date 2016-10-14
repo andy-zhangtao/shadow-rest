@@ -113,6 +113,7 @@ func main() {
 	go ss.IsAboveRate()
 	// 用户数据持久化
 	go ss.Persistence()
+	go ss.PersistencePasswd()
 
 	// 重新加载配置文件
 	go waitSignal(configFile, config)

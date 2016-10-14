@@ -38,6 +38,7 @@ func IsExpiry() {
 						golog.Debug(l.Port, "被关闭", l.ExpiryDate)
 						l.Listen.Close()
 						delete(listenMap, p)
+						KillUserPass(l.Port)
 					}
 				}
 			}
