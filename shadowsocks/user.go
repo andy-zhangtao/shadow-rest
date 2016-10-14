@@ -44,7 +44,10 @@ func CreateUser(u *User) {
 func CreatePasswd() string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	passwd := ""
-	for index := 0; index < 7; index++ {
+	for {
+		if len(passwd) == 8 {
+			break
+		}
 		p := strconv.Itoa(r.Intn(10))
 		passwd = passwd + p
 	}
