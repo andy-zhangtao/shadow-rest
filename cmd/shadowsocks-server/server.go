@@ -93,6 +93,12 @@ func main() {
 	ss.Minport = config.Minport
 	ss.Maxport = config.Maxport
 
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+	}()
+
 	for port, password := range config.PortPassword {
 		go ss.Run(port, password, config.Method, config.Auth)
 	}

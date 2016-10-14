@@ -107,7 +107,7 @@ func SetRate(port, rate string) error {
 // IsAboveRate 判断当前每个链接是否超过指定流量
 func IsAboveRate() {
 	for {
-		ticker := time.NewTicker(1 * time.Minute)
+		ticker := time.NewTicker(10 * time.Second)
 		for {
 			select {
 			case <-ticker.C:
@@ -116,9 +116,10 @@ func IsAboveRate() {
 					// 0 表示无限制
 					if l.RateLimit != 0 {
 						if l.Rate >= l.RateLimit {
-							golog.Debug(l.Port, "被关闭", l.Rate, l.RateLimit)
+							golog.Debug(l.Port, "流量超限需要被关闭")
 							l.Listen.Close()
 							delete(listenMap, p)
+							golog.Debug(l.Port, "被关闭", l.Rate, l.RateLimit)
 						}
 					}
 

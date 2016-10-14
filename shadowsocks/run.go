@@ -194,7 +194,7 @@ func RunNew(u *User) {
 	if err != nil {
 		log.Printf("error listening port %v: %v\n", u.Port, err)
 		ConnChan <- err
-		os.Exit(-1)
+		return
 	}
 
 	passwdManager.Add(u.Port, u.Password, ln)
@@ -205,7 +205,7 @@ func RunNew(u *User) {
 	if err != nil {
 		log.Printf("error expriy date %v: %v\n", u.Expriy, err)
 		ConnChan <- err
-		os.Exit(-1)
+		return
 	}
 
 	ed := time.Now().AddDate(0, 0, d).Format(TIMEFORMATE)
@@ -229,7 +229,7 @@ func RunNew(u *User) {
 		if err != nil {
 			// listener maybe closed to update password
 			debug.Printf("accept error: %v\n", err)
-			os.Exit(-1)
+			return
 		}
 
 		// Creating cipher upon first connection.
@@ -256,7 +256,7 @@ func Run(port, password, method string, auth bool) {
 	ln, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Printf("error listening port %v: %v\n", port, err)
-		os.Exit(1)
+		return
 	}
 
 	passwdManager.Add(port, password, ln)
