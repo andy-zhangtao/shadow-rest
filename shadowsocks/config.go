@@ -19,7 +19,8 @@ type Config struct {
 	Password   string      `json:"password"`
 	Method     string      `json:"method"` // encryption method
 	Auth       bool        `json:"auth"`   // one time auth
-
+	Minport    int         `json:"minport"`
+	Maxport    int         `json:"maxport"`
 	// following options are only used by server
 	PortPassword map[string]string `json:"port_password"`
 	Timeout      int               `json:"timeout"`

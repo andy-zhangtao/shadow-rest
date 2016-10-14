@@ -12,6 +12,8 @@ import (
 	"strconv"
 	"syscall"
 	"time"
+
+	"github.com/andy-zhangtao/shadow-rest/configure"
 )
 
 var debug DebugLog
@@ -35,8 +37,16 @@ const (
 
 var connCnt int
 var nextLogConnCnt = logCntDelta
+
+// listenChan 用于统计网络链接信息
 var listenChan = make(chan *Listen)
+
+// rateChan 用于统计网络链接流量信息
 var rateChan = make(chan *Listen)
+
+// ConnChan 用于定制网络链接信息
+var ConnChan = make(chan error)
+
 var passwdManager = PasswdManager{PortListener: map[string]*PortListener{}}
 
 // GetDebug 用于设置Debug函数
@@ -175,6 +185,66 @@ func HandleConnection(conn *Conn, auth bool, lr *Listen) {
 	PipeThenClose(remote, conn, lr)
 	closed = true
 	return
+}
+
+// RunNew 通过API自动创建一个网络链接
+func RunNew(u *User) {
+	CreateUser(u)
+	ln, err := net.Listen("tcp", ":"+u.Port)
+	if err != nil {
+		log.Printf("error listening port %v: %v\n", u.Port, err)
+		ConnChan <- err
+		os.Exit(-1)
+	}
+
+	passwdManager.Add(u.Port, u.Password, ln)
+	var cipher *Cipher
+	log.Printf("server listening port %v ...\n", u.Port)
+
+	d, err := strconv.Atoi(u.Expriy)
+	if err != nil {
+		log.Printf("error expriy date %v: %v\n", u.Expriy, err)
+		ConnChan <- err
+		os.Exit(-1)
+	}
+
+	ed := time.Now().AddDate(0, 0, d).Format(TIMEFORMATE)
+	ls := &Listen{
+		Port:       u.Port,
+		Listen:     ln,
+		ExpiryDate: ed,
+		RateLimit:  u.Rate,
+	}
+
+	listenChan <- ls
+
+	lr := &Listen{
+		Port: u.Port,
+		Rate: 0,
+	}
+
+	ConnChan <- nil
+	for {
+		conn, err := ln.Accept()
+		if err != nil {
+			// listener maybe closed to update password
+			debug.Printf("accept error: %v\n", err)
+			os.Exit(-1)
+		}
+
+		// Creating cipher upon first connection.
+		if cipher == nil {
+			log.Println("creating cipher for port:", u.Port)
+			cipher, err = NewCipher(configure.DEFAULTMETHOD, u.Password)
+			if err != nil {
+				log.Printf("Error generating cipher for port: %s %v\n", u.Port, err)
+				conn.Close()
+				continue
+			}
+		}
+
+		go HandleConnection(NewConn(conn, cipher.Copy()), true, lr)
+	}
 }
 
 // Run SS执行函数

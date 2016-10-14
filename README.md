@@ -19,6 +19,7 @@ Forked from shadowsocks/shadowsocks-go
 | /user/expiry | Modify specify proxy expiry date |
 | /user/rate | Get all the proxy rate |
 | /user/info | Get all the proxy info |
+| /user/new | Create a new user |
 
 * Misc API
 

@@ -89,6 +89,10 @@ func main() {
 	if core > 0 {
 		runtime.GOMAXPROCS(core)
 	}
+
+	ss.Minport = config.Minport
+	ss.Maxport = config.Maxport
+
 	for port, password := range config.PortPassword {
 		go ss.Run(port, password, config.Method, config.Auth)
 	}
@@ -114,6 +118,7 @@ func main() {
 	r.HandleFunc("/user/info", handler.GetInfoHandler).Methods(http.MethodGet)
 	r.HandleFunc("/user/rate", handler.GetRateHandler).Methods(http.MethodGet)
 	r.HandleFunc("/user/rate", handler.SetRateHandler).Methods(http.MethodPut)
+	r.HandleFunc("/user/new", handler.CreateUserHandler).Methods(http.MethodPost)
 
 	r.HandleFunc("/version", handler.GetVersion).Methods(http.MethodGet)
 

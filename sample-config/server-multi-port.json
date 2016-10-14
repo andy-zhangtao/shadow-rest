@@ -4,5 +4,7 @@
 		"8388": "barfoo"
 	},
 	"method": "aes-128-cfb",
-	"timeout": 600
+	"timeout": 600,
+	"minport": 10001,
+	"maxport": 14999
 }
