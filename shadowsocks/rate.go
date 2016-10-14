@@ -117,7 +117,7 @@ func IsAboveRate() {
 					if l.RateLimit != 0 {
 						if l.Rate >= l.RateLimit {
 							golog.Debug(l.Port, "流量超限需要被关闭")
-							l.Listen.Close()
+							l.listen.Close()
 							delete(listenMap, p)
 							KillUserPass(l.Port)
 							golog.Debug(l.Port, "被关闭", l.Rate, l.RateLimit)

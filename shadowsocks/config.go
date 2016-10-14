@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os/user"
+
 	// "log"
 	"os"
 	"reflect"
@@ -33,6 +35,7 @@ type Config struct {
 }
 
 var readTimeout time.Duration
+var listenBakConf map[string]Listen
 
 // GetServerArray 获取当前所有服务参数
 func (config *Config) GetServerArray() []string {
@@ -130,4 +133,57 @@ func UpdateConfig(old, new *Config) {
 
 	old.Timeout = new.Timeout
 	readTimeout = time.Duration(old.Timeout) * time.Second
+}
+
+// ParseBackConfig 解析备份配置文件数据
+func ParseBackConfig(config *Config) error {
+	usr, err := user.Current()
+	if err != nil {
+		return err
+	}
+	// 解析口令配置文件
+	file, err := os.Open(usr.HomeDir + "/passwd.json") // For read access.
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+
+	up := &UserPassBack{}
+	if err = json.Unmarshal(data, up); err != nil {
+		return err
+	}
+
+	pb := make(map[string]string)
+	for _, b := range up.Upb {
+		pb[b.Port] = b.Password
+	}
+
+	config.PortPassword = pb
+
+	// 解析网络备份文件
+	file, err = os.Open(usr.HomeDir + "/user.json") // For read access.
+	if err != nil {
+		return err
+	}
+
+	data, err = ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+
+	lb := &ListenBak{}
+	if err = json.Unmarshal(data, lb); err != nil {
+		return err
+	}
+
+	listenBakConf = make(map[string]Listen)
+	for _, l := range lb.Lb {
+		listenBakConf[l.Port] = l
+	}
+	return nil
 }

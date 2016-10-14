@@ -214,7 +214,7 @@ func RunNew(u *User) {
 	ed := time.Now().AddDate(0, 0, d).Format(TIMEFORMATE)
 	ls := &Listen{
 		Port:       u.Port,
-		Listen:     ln,
+		listen:     ln,
 		ExpiryDate: ed,
 		RateLimit:  u.Rate,
 	}
@@ -272,18 +272,28 @@ func Run(port, password, method string, auth bool) {
 	var cipher *Cipher
 	log.Printf("server listening port %v ...\n", port)
 
-	ed := time.Now().AddDate(0, 0, 7).Format(TIMEFORMATE)
-	ls := &Listen{
-		Port:       port,
-		Listen:     ln,
-		ExpiryDate: ed,
+	ed := ""
+	rate := 0
+	rateLimit := 0
+	if listenBakConf[port].Port != "" {
+		ed = listenBakConf[port].ExpiryDate
+		rate = listenBakConf[port].Rate
+		rateLimit = listenBakConf[port].RateLimit
+	} else {
+		ed = time.Now().AddDate(0, 0, 7).Format(TIMEFORMATE)
 	}
 
+	ls := &Listen{
+		Port:       port,
+		listen:     ln,
+		ExpiryDate: ed,
+		Rate:       rate,
+		RateLimit:  rateLimit,
+	}
 	listenChan <- ls
 
 	lr := &Listen{
 		Port: port,
-		Rate: 0,
 	}
 
 	PasswdChan <- &UserPass{

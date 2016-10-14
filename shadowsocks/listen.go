@@ -29,7 +29,12 @@ type Listen struct {
 	Rate       int    `json:"rate"`
 	ExpiryDate string `json:"expiry_date"`
 	RateLimit  int    `json:"rate_limit"`
-	Listen     net.Listener
+	listen     net.Listener
+}
+
+// ListenBak 网络备份
+type ListenBak struct {
+	Lb []Listen `json:"lb"`
 }
 
 // AddListen 添加网络对象
@@ -45,8 +50,8 @@ func AddListen(l Listen) {
 func KillListen(port string) error {
 	l := listenMap[port]
 
-	if l.Listen != nil {
-		err := l.Listen.Close()
+	if l.listen != nil {
+		err := l.listen.Close()
 		if err != nil {
 			return err
 		}
@@ -74,7 +79,7 @@ func GetListen() []string {
 // IsExists 判断指定端口是否已经存在
 func IsExists(port string) bool {
 	l := listenMap[port]
-	if l.Listen == nil {
+	if l.listen == nil {
 		return false
 	}
 
@@ -90,8 +95,8 @@ func AddRate(r Listen) {
 	if tl.Port != "" {
 		listenMap[r.Port] = l
 	} else {
-		if tl.Listen != nil {
-			tl.Listen.Close()
+		if tl.listen != nil {
+			tl.listen.Close()
 		}
 	}
 }

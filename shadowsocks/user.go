@@ -35,6 +35,11 @@ type UserPass struct {
 	Password string `json:"password"`
 }
 
+// UserPassBack 用于格式化输出UserPass
+type UserPassBack struct {
+	Upb []UserPass `json:"upb"`
+}
+
 var (
 	// Minport 默认最低端口从10001开始
 	Minport = 10001
@@ -99,7 +104,18 @@ func Persistence() {
 	for {
 		select {
 		case <-ticker.C:
-			data, err := json.Marshal(listenMap)
+			lm := make([]Listen, len(listenMap))
+			i := 0
+			for l := range listenMap {
+				lm[i] = listenMap[l]
+				i++
+			}
+
+			lb := &ListenBak{
+				Lb: lm,
+			}
+
+			data, err := json.Marshal(lb)
 			if err != nil {
 				golog.Error(err.Error())
 			}
@@ -141,7 +157,18 @@ func PersistencePasswd() {
 				PassMap[pp.Port] = *pp
 			}
 
-			data, err := json.Marshal(PassMap)
+			up := make([]UserPass, len(PassMap))
+			i := 0
+			for p := range PassMap {
+				up[i] = PassMap[p]
+				i++
+			}
+
+			upb := &UserPassBack{
+				Upb: up,
+			}
+
+			data, err := json.Marshal(upb)
 			if err != nil {
 				golog.Error(err.Error())
 			}

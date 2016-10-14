@@ -33,6 +33,7 @@ func waitSignal(configFile string, config *ss.Config) {
 
 var configFile string
 var config *ss.Config
+var backConfig *ss.Config
 
 func main() {
 	log.SetOutput(os.Stdout)
@@ -98,6 +99,11 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	}()
+
+	err = ss.ParseBackConfig(config)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+	}
 
 	for port, password := range config.PortPassword {
 		go ss.Run(port, password, config.Method, config.Auth)
