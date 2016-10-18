@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"os/user"
 
 	// "log"
 	"os"
@@ -137,12 +136,13 @@ func UpdateConfig(old, new *Config) {
 
 // ParseBackConfig 解析备份配置文件数据
 func ParseBackConfig(config *Config) error {
-	usr, err := user.Current()
-	if err != nil {
-		return err
+	con := os.Getenv("configdir")
+	if con == "" {
+		con = "/config"
 	}
+
 	// 解析口令配置文件
-	file, err := os.Open(usr.HomeDir + "/passwd.json") // For read access.
+	file, err := os.Open(con + "/passwd.json") // For read access.
 	if err != nil {
 		return err
 	}
@@ -166,7 +166,7 @@ func ParseBackConfig(config *Config) error {
 	config.PortPassword = pb
 
 	// 解析网络备份文件
-	file, err = os.Open(usr.HomeDir + "/user.json") // For read access.
+	file, err = os.Open(con + "/user.json") // For read access.
 	if err != nil {
 		return err
 	}
