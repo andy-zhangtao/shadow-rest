@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"math/rand"
-	"os/user"
+	"os"
 	"strconv"
 	"sync"
 	"time"
@@ -94,10 +94,9 @@ func getNextPort() string {
 
 // Persistence 用户数据持久化
 func Persistence() {
-	usr, err := user.Current()
-	if err != nil {
-		golog.Error(err.Error())
-		return
+	config := os.Getenv("configdir")
+	if config == "" {
+		config = "/config"
 	}
 
 	ticker := time.NewTicker(1 * time.Minute)
@@ -120,7 +119,7 @@ func Persistence() {
 				golog.Error(err.Error())
 			}
 
-			err = ioutil.WriteFile(usr.HomeDir+"/user.json", data, 0600)
+			err = ioutil.WriteFile(config+"/user.json", data, 0600)
 			if err != nil {
 				golog.Error(err.Error())
 			}
@@ -137,10 +136,9 @@ func KillUserPass(port string) {
 
 // PersistencePasswd 用户口令持久化
 func PersistencePasswd() {
-	usr, err := user.Current()
-	if err != nil {
-		golog.Error(err.Error())
-		return
+	config := os.Getenv("configdir")
+	if config == "" {
+		config = "/config"
 	}
 
 	for {
@@ -173,7 +171,7 @@ func PersistencePasswd() {
 				golog.Error(err.Error())
 			}
 
-			err = ioutil.WriteFile(usr.HomeDir+"/passwd.json", data, 0600)
+			err = ioutil.WriteFile(config+"/passwd.json", data, 0600)
 			if err != nil {
 				golog.Error(err.Error())
 			}
