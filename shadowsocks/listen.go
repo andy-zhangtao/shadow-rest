@@ -18,6 +18,9 @@ import (
 var listenMap map[string]Listen
 var PassMap map[string]UserPass
 
+// GlobaIP 全局监听IP
+var GlobaIP string
+
 const (
 	// TIMEFORMATE 默认时间格式
 	TIMEFORMATE = "2006-01-02"

@@ -193,7 +193,15 @@ func HandleConnection(conn *Conn, auth bool, lr *Listen) {
 // RunNew 通过API自动创建一个网络链接
 func RunNew(u *User) {
 	CreateUser(u)
-	ln, err := net.Listen("tcp", ":"+u.Port)
+
+	var ln net.Listener
+	var err error
+	if GlobaIP != "" {
+		ln, err = net.Listen("tcp6", GlobaIP+":"+u.Port)
+	} else {
+		ln, err = net.Listen("tcp4", ":"+u.Port)
+	}
+
 	if err != nil {
 		log.Printf("error listening port %v: %v\n", u.Port, err)
 		ConnChan <- err
@@ -262,7 +270,15 @@ func RunNew(u *User) {
 // @method  端口绑定加密算法
 // @auth    是否需要一次性认证
 func Run(port, password, method string, auth bool) {
-	ln, err := net.Listen("tcp", ":"+port)
+
+	var ln net.Listener
+	var err error
+	if GlobaIP != "" {
+		ln, err = net.Listen("tcp6", GlobaIP+":"+port)
+	} else {
+		ln, err = net.Listen("tcp4", ":"+port)
+	}
+
 	if err != nil {
 		log.Printf("error listening port %v: %v\n", port, err)
 		return

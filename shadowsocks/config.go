@@ -85,6 +85,7 @@ func ParseConfig(path string) (config *Config, err error) {
 	if err = json.Unmarshal(data, config); err != nil {
 		return nil, err
 	}
+
 	readTimeout = time.Duration(config.Timeout) * time.Second
 	if strings.HasSuffix(strings.ToLower(config.Method), "-auth") {
 		config.Method = config.Method[:len(config.Method)-5]
