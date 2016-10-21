@@ -325,8 +325,8 @@ func handleConnection(conn net.Conn) {
 		}
 	}()
 
-	go ss.PipeThenClose(conn, remote)
-	ss.PipeThenClose(remote, conn)
+	go ss.PipeThenCloseLocal(conn, remote)
+	ss.PipeThenCloseLocal(remote, conn)
 	closed = true
 	debug.Println("closed connection to", addr)
 }

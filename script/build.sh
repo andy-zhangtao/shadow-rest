@@ -31,9 +31,9 @@ version(){
     fi
 
     rm -f config.git-hash
-    
+
     cat $ROOT/shadowsocks/handler/versionHandler.go.template | sed "s/\$GIT/$GIT_VERSION/g" > $ROOT/shadowsocks/handler/versionHandler.go
-    
+
     echo "Generated version"
 }
 
@@ -73,7 +73,7 @@ build() {
 }
 
 version
-# build darwin amd64 mac64 local
+build darwin amd64 mac64 local
 # build linux amd64 linux64 local
 # build linux 386 linux32 local
 # build windows amd64 win64 local
