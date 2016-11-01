@@ -73,7 +73,7 @@ build() {
 }
 
 version
-build darwin amd64 mac64 local
+# build darwin amd64 mac64 local
 # build linux amd64 linux64 local
 # build linux 386 linux32 local
 # build windows amd64 win64 local
