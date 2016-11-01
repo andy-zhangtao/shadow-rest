@@ -82,6 +82,7 @@ func main() {
 	if len(sa) > 1 {
 		ss.GlobaIP = sa[0]
 	}
+
 	if config.Method == "" {
 		config.Method = "aes-256-cfb"
 	}

@@ -27,7 +27,20 @@ Forked from shadowsocks/shadowsocks-go
 | -------- | ----- |
 | /version | Get current version |
 
+#####/user/new  POST
+```
+schema:
+{
+    "expriy":"有效期，string"，
+    "rate":"数据量,单位字节。 int。 0 表示无限制"
+}
 
+example:
+{
+        "expriy":"7",//7天有效期，以当天开始计算,
+        "rate":0 //无限流量
+}
+```
 
 shadowsocks-go version: 1.1.5  shadow-rest version: 0.1.X [![Build Status](https://travis-ci.org/andy-zhangtao/shadow-rest.svg?branch=master)]
 
