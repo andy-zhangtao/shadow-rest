@@ -29,6 +29,7 @@ Forked from shadowsocks/shadowsocks-go
 
 #####/user/new  POST
 ```
+创建新账户
 schema:
 {
     "expriy":"有效期，string"，
@@ -39,6 +40,22 @@ example:
 {
         "expriy":"7",//7天有效期，以当天开始计算,
         "rate":0 //无限流量
+}
+```
+
+#####/user/expiry PUT
+```
+修改账户有效期
+schema:
+{
+    "expriy":"有效期，string"，
+    "port":"需要维护链接有效期的端口, string"
+}
+
+example
+{
+    "expiry":"2016-11-14",
+    "port":"10001"
 }
 ```
 
