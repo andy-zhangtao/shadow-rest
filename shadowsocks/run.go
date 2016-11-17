@@ -260,7 +260,7 @@ func RunNew(u *User) {
 			}
 		}
 
-		go HandleConnection(NewConn(conn, cipher.Copy()), true, lr)
+		go HandleConnection(NewConn(conn, cipher.Copy()), false, lr)
 	}
 }
 
