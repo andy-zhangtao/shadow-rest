@@ -4,8 +4,6 @@ import (
 	"os"
 	"strconv"
 
-	"golog"
-
 	mailer "github.com/kataras/go-mailer"
 )
 
@@ -36,7 +34,6 @@ func SendEmail(content string) error {
 	if email.Host == "" ||
 		email.Username == "" ||
 		email.Password == "" {
-		golog.Debug("EMAIL 信息不完整")
 		return nil
 	}
 
