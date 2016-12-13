@@ -11,5 +11,6 @@ install:
     - go get golang.org/x/crypto/blowfish
     - go get golang.org/x/crypto/cast5
     - go get golang.org/x/crypto/salsa20/salsa
+    - go get -u github.com/kataras/go-mailer
 script:
     - cd script; ./build.sh
