@@ -59,6 +59,20 @@ example
 }
 ```
 
+##### About Sand email.
+
+If you wants send event email(rate/expriy), you should set the follow env :
+
+| Name | Usage |
+| -------- | ----- |
+| SS_EMAIL_HOST | Host addr |
+| SS_USER_NAME | Username |
+| SS_PASS_WORD | Password |
+| SS_PORT | Port (587 default)|
+| SS_DEST_EMAIL | Dest Email addr |
+| SS_ID | Host ID |
+
+
 shadowsocks-go version: 1.1.5  shadow-rest version: 0.1.X [![Build Status](https://travis-ci.org/andy-zhangtao/shadow-rest.svg?branch=master)]
 
 shadowsocks-go is a lightweight tunnel proxy which can help you get through firewalls. It is a port of [shadowsocks](https://github.com/clowwindy/shadowsocks).
