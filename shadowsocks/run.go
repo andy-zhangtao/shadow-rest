@@ -225,6 +225,7 @@ func RunNew(u *User) {
 		listen:     ln,
 		ExpiryDate: ed,
 		RateLimit:  u.Rate,
+		Email:      u.Email,
 	}
 
 	listenChan <- ls

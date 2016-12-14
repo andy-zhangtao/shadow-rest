@@ -121,7 +121,7 @@ func IsAboveRate() {
 							delete(listenMap, p)
 							KillUserPass(l.Port)
 							golog.Debug(l.Port, "被关闭", l.Rate, l.RateLimit)
-							SendEmail(l.Port + " Will be closed. Curreny Rate:" + strconv.Itoa(l.Rate) + " Max Rate:" + strconv.Itoa(l.RateLimit))
+							SendEmail(l.Port+" Will be closed. Curreny Rate:"+strconv.Itoa(l.Rate)+" Max Rate:"+strconv.Itoa(l.RateLimit), l.Email)
 						}
 					}
 

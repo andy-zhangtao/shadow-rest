@@ -2,6 +2,8 @@
 
 Forked from shadowsocks/shadowsocks-go
 
+shadowsocks-go version: 1.1.5  shadow-rest version: 0.1.X [![Build Status](https://travis-ci.org/andy-zhangtao/shadow-rest.svg?branch=master)]
+
 ## New Features
 
 * Support REST API
@@ -34,12 +36,14 @@ schema:
 {
     "expriy":"有效期，string"，
     "rate":"数据量,单位字节。 int。 0 表示无限制"
+    "email":"用户邮箱地址"
 }
 
 example:
 {
         "expriy":"7",//7天有效期，以当天开始计算,
-        "rate":0 //无限流量
+        "rate":0 //无限流量,
+        "email":"ztao8607@gmail.com"
 }
 ```
 
@@ -73,7 +77,6 @@ If you wants send event email(rate/expriy), you should set the follow env :
 | SS_ID | Host ID |
 
 
-shadowsocks-go version: 1.1.5  shadow-rest version: 0.1.X [![Build Status](https://travis-ci.org/andy-zhangtao/shadow-rest.svg?branch=master)]
 
 shadowsocks-go is a lightweight tunnel proxy which can help you get through firewalls. It is a port of [shadowsocks](https://github.com/clowwindy/shadowsocks).
 

@@ -32,6 +32,7 @@ type Listen struct {
 	Rate       int    `json:"rate"`
 	ExpiryDate string `json:"expiry_date"`
 	RateLimit  int    `json:"rate_limit"`
+	Email      string `json:"email"` //16-12-14 新增Email属性
 	listen     net.Listener
 }
 

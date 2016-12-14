@@ -26,6 +26,7 @@ type User struct {
 	Port     string
 	Expriy   string `json:"expriy"`
 	Rate     int    `json:"rate"`
+	Email    string `json:"email"` //16-12-14 新增email属性
 	Password string
 }
 

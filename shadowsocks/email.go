@@ -15,8 +15,8 @@ type Email struct {
 	Dest     string `json:"dest"`
 }
 
-// SendEmail 发送邮件到指定邮箱
-func SendEmail(content string) error {
+// SendEmail 发送邮件到指定邮箱 content 邮件内容 addr 对方邮箱
+func SendEmail(content string, addr string) error {
 
 	p, err := strconv.Atoi(os.Getenv("SS_PORT"))
 	if err != nil {
@@ -46,6 +46,9 @@ func SendEmail(content string) error {
 
 	mailService := mailer.New(cfg)
 	var to = []string{email.Dest}
+	if addr != "" {
+		to = append(to, addr)
+	}
 
 	err = mailService.Send("FROM "+os.Getenv("SS_ID"), content, to...)
 	if err != nil {
