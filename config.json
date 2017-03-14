@@ -1,8 +1,12 @@
 {
-    "server":"127.0.0.1",
-    "server_port":8388,
-    "local_port":1080,
-    "password":"barfoo!",
-    "method": "aes-128-cfb-auth",
-    "timeout":600
+    "port_password": {
+        "10001": "12345678",
+        "10002": "87654321"
+    },
+    "method": "aes-256-cfb",
+    "timeout": 600,
+    "minport": 10001,
+    "maxport": 14999,
+    "auth": false,
+    "proxy_port": "8344"
 }
