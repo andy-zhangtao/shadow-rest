@@ -11,6 +11,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
 	ss "github.com/andy-zhangtao/shadow-rest/shadowsocks"
@@ -148,5 +149,5 @@ func main() {
 	go func() {
 		log.Println(http.ListenAndServe(":8001", p))
 	}()
-	log.Println(http.ListenAndServe(":8000", r))
+	log.Println(http.ListenAndServe(":8000", handlers.CORS()(r)))
 }
