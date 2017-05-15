@@ -3,8 +3,12 @@ package shadowsocks
 import (
 	"errors"
 	"net"
+	"os"
+
+	"github.com/andy-zhangtao/shadow-rest/shadowsocks/db"
 
 	"github.com/andy-zhangtao/shadow-rest/configure"
+	"github.com/andy-zhangtao/shadow-rest/shadowsocks/util"
 )
 
 /**
@@ -117,14 +121,28 @@ func GetPortRate(port string) *Listen {
 }
 
 // GetRate 获取所有端口流量
-func GetRate() []*Listen {
-	r := make([]*Listen, 0, len(listenMap))
-	for p := range listenMap {
-		l := listenMap[p]
-		r = append(r, &l)
+func GetRate() ([]User, error) {
+	if mongoSession == nil {
+		mongoSession = db.GetMongo()
 	}
 
-	return r
+	u := mongoSession.DB(os.Getenv(util.MONGODB)).C("user")
+
+	var user []User
+
+	err := u.Find(nil).Sort("+id").All(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+	// r := make([]*Listen, 0, len(listenMap))
+	// for p := range listenMap {
+	// 	l := listenMap[p]
+	// 	r = append(r, &l)
+	// }
+
+	// return r
 }
 
 // ClearPortRate 端口流量清零

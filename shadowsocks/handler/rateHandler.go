@@ -22,8 +22,11 @@ import (
 
 // GetInfoHandler 获取当前所有的端口信息
 func GetInfoHandler(w http.ResponseWriter, r *http.Request) {
-	keys := ss.GetRate()
-
+	keys, err := ss.GetRate()
+	if err != nil {
+		Sandstorm.HTTPError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	content, _ := json.Marshal(keys)
 
 	Sandstorm.HTTPSuccess(w, string(content))
@@ -31,12 +34,17 @@ func GetInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 // GetRateHandler 获取当前所有端口流量数据
 func GetRateHandler(w http.ResponseWriter, r *http.Request) {
-	keys := ss.GetRate()
+	keys, err := ss.GetRate()
+	if err != nil {
+		Sandstorm.HTTPError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	rate := make([]*ss.Rate, len(keys))
 
 	for i, k := range keys {
 		r := &ss.Rate{
-			Port: k.Port,
+			Port: k.ID,
 			Rate: ss.ConvertRate(k.Rate),
 		}
 		rate[i] = r

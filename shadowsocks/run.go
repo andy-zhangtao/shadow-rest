@@ -50,6 +50,9 @@ var ConnChan = make(chan error)
 // PasswdChan 用于保存网络链接及其口令
 var PasswdChan = make(chan *UserPass)
 
+// UserChan 传递新建用户信息
+var UserChan = make(chan *User)
+
 var passwdManager = PasswdManager{PortListener: map[string]*PortListener{}}
 
 // GetDebug 用于设置Debug函数
@@ -236,11 +239,11 @@ func RunNew(u *User) {
 	}
 
 	ConnChan <- nil
-
-	PasswdChan <- &UserPass{
-		Port:     u.Port,
-		Password: u.Password,
-	}
+	UserChan <- u
+	// PasswdChan <- &UserPass{
+	// 	Port:     u.Port,
+	// 	Password: u.Password,
+	// }
 
 	for {
 		conn, err := ln.Accept()
@@ -313,10 +316,10 @@ func Run(port, password, method string, auth bool) {
 		Port: port,
 	}
 
-	PasswdChan <- &UserPass{
-		Port:     port,
-		Password: password,
-	}
+	// PasswdChan <- &UserPass{
+	// 	Port:     port,
+	// 	Password: password,
+	// }
 
 	for {
 		conn, err := ln.Accept()
