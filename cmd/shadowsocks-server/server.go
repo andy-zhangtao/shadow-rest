@@ -149,5 +149,8 @@ func main() {
 	go func() {
 		log.Println(http.ListenAndServe(":8001", p))
 	}()
-	log.Println(http.ListenAndServe(":8000", handlers.CORS()(r)))
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	log.Println(http.ListenAndServe(":8000", handlers.CORS(headersOk, originsOk, methodsOk)(r)))
 }
