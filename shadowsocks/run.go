@@ -238,6 +238,8 @@ func RunNew(u *User) {
 		Rate: 0,
 	}
 
+	// 更新用户失效日期
+	u.Expriy = ls.ExpiryDate
 	ConnChan <- nil
 	UserChan <- u
 	// PasswdChan <- &UserPass{
