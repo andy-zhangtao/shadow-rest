@@ -37,7 +37,7 @@ var config *ss.Config
 var backConfig *ss.Config
 
 func main() {
-	log.SetOutput(os.Stdout)
+	// log.SetOutput(os.Stdout)
 
 	// debug := ss.GetDebug()
 	var cmdConfig ss.Config
@@ -61,7 +61,6 @@ func main() {
 	}
 
 	// ss.SetDebug(debug)
-
 	if strings.HasSuffix(cmdConfig.Method, "-auth") {
 		cmdConfig.Method = cmdConfig.Method[:len(cmdConfig.Method)-5]
 		cmdConfig.Auth = true

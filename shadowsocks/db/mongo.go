@@ -14,8 +14,12 @@ import (
 var Session *mgo.Session
 
 func init() {
-	log.Println("==================")
 	var err error
+
+	if os.Getenv(util.MONGOURL) == "" {
+		return
+	}
+
 	if Session == nil {
 		login := &mgo.DialInfo{
 			Addrs:    []string{os.Getenv(util.MONGOURL)},
