@@ -29,7 +29,7 @@ shadowsocks-go version: 1.1.5  shadow-rest version: 0.1.X [![Build Status](https
 | -------- | ----- |
 | /version | Get current version |
 
-#####/user/new  POST
+##### /user/new  POST
 ```
 创建新账户
 schema:
@@ -47,7 +47,7 @@ example:
 }
 ```
 
-#####/user/expiry PUT
+##### /user/expiry PUT
 ```
 修改账户有效期
 schema:
