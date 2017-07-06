@@ -143,12 +143,8 @@ func main() {
 
 	r.HandleFunc("/version", handler.GetVersion).Methods(http.MethodGet)
 
-	p := mux.NewRouter()
-	p.HandleFunc("/proxy", handler.ProxyConnHandler).Methods(http.MethodGet)
-	p.HandleFunc("/proxy/{id}", handler.ProxyInfo).Methods(http.MethodGet)
-	go func() {
-		log.Println(http.ListenAndServe(":8001", p))
-	}()
+	r.HandleFunc("/proxy", handler.ProxyConnHandler).Methods(http.MethodGet)
+	r.HandleFunc("/proxy/{id}", handler.ProxyInfo).Methods(http.MethodGet)
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
