@@ -136,13 +136,6 @@ func GetRate() ([]User, error) {
 	}
 
 	return user, nil
-	// r := make([]*Listen, 0, len(listenMap))
-	// for p := range listenMap {
-	// 	l := listenMap[p]
-	// 	r = append(r, &l)
-	// }
-
-	// return r
 }
 
 // ClearPortRate 端口流量清零

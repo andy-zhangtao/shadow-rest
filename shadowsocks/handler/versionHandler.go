@@ -9,7 +9,7 @@ import (
 // GetVersion 获取当前版本信息
 func GetVersion(w http.ResponseWriter, r *http.Request) {
 
-	dv := "Dev Version: " + "r53+2 253957a"
+	dv := "Dev Version: " + "r53+3M 6f71fd5"
 	rv := "  Release Version: 0.2"
 	Sandstorm.HTTPSuccess(w, dv+rv)
 }

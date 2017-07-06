@@ -145,6 +145,7 @@ func main() {
 
 	p := mux.NewRouter()
 	p.HandleFunc("/proxy", handler.ProxyConnHandler).Methods(http.MethodGet)
+	p.HandleFunc("/proxy/{id}", handler.ProxyConnHandler).Methods(http.MethodGet)
 	go func() {
 		log.Println(http.ListenAndServe(":8001", p))
 	}()

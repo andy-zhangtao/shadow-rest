@@ -7,10 +7,23 @@ import (
 	"net/http"
 )
 
+/**
+ * Created with VScode.
+ * User: andy.zhangtao <ztao8607@gmail.com>
+ * Date: 17-07-06
+ * Time: 11:03
+ * 处理代理请求
+ */
+
 type Proxy struct {
 	URI string `json:"uri"`
 }
 
+// ProxyInfo 获取代理服务信息
+// 返回可以适合直接输出QRcode的字符串
+func ProxyInfo(w http.ResponseWriter, r *http.Request) {
+
+}
 func ProxyConnHandler(w http.ResponseWriter, r *http.Request) {
 	uri := r.URL.Query().Get("URI")
 	// proxy := new(Proxy)

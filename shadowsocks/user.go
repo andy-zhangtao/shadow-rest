@@ -62,7 +62,11 @@ var mutex sync.Mutex
 
 // CreateUser 创建新用户
 func CreateUser(u *User) {
-	u.Port = getNextPort()
+	if u.ID == "" {
+		u.Port = getNextPort()
+	} else {
+		u.Port = u.ID
+	}
 }
 
 // CreatePasswd 创建一个8位数随机密码
