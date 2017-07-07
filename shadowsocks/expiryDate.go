@@ -39,7 +39,7 @@ func IsExpiry() {
 						l.listen.Close()
 						delete(listenMap, p)
 						KillUserPass(l.Port)
-						SendEmail(l.Port+" Will be closed. ExpiryDate:"+l.ExpiryDate, l.Email)
+						SendEmail(l.Port+" 将会被关闭. 过期时间为:"+l.ExpiryDate, l.Email)
 					}
 				}
 			}

@@ -3,11 +3,17 @@ package shadowsocks
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"os"
 	"strconv"
 	"sync"
 	"time"
+
+	"gopkg.in/mgo.v2/bson"
+
+	"github.com/andy-zhangtao/shadow-rest/shadowsocks/db"
+	"github.com/andy-zhangtao/shadow-rest/shadowsocks/util"
 
 	"github.com/andy-zhangtao/golog"
 )
@@ -23,11 +29,13 @@ import (
 
 // User 网络链接结构体. Conn对应网络链接，所以这里使用User替代Conn
 type User struct {
-	Port     string
-	Expriy   string `json:"expriy"`
-	Rate     int    `json:"rate"`
-	Email    string `json:"email"` //16-12-14 新增email属性
-	Password string
+	Port      string
+	Expriy    string `json:"expriy"`
+	Rate      int    `json:"rate"`
+	RateLimit int    `json:"ratelimit"`
+	Email     string `json:"email"` //16-12-14 新增email属性
+	Password  string `json:"password"`
+	ID        string `json:"port"`
 }
 
 // UserPass 将端口和链接口令单独保存
@@ -54,7 +62,11 @@ var mutex sync.Mutex
 
 // CreateUser 创建新用户
 func CreateUser(u *User) {
-	u.Port = getNextPort()
+	if u.ID == "" {
+		u.Port = getNextPort()
+	} else {
+		u.Port = u.ID
+	}
 }
 
 // CreatePasswd 创建一个8位数随机密码
@@ -95,37 +107,81 @@ func getNextPort() string {
 
 // Persistence 用户数据持久化
 func Persistence() {
-	config := os.Getenv("configdir")
-	if config == "" {
-		config = "/config"
+	if mongoSession == nil {
+		mongoSession = db.GetMongo()
 	}
 
+	u := mongoSession.DB(os.Getenv(util.MONGODB)).C("user")
 	ticker := time.NewTicker(1 * time.Minute)
 	for {
 		select {
+		case user := <-UserChan:
+			log.Printf("%s\n", user.Port)
+			err := u.Insert(&User{
+				RateLimit: user.Rate,
+				Password:  user.Password,
+				Email:     user.Email,
+				Expriy:    user.Expriy,
+				ID:        user.Port,
+			})
+			if err != nil {
+				log.Println(err.Error())
+			}
 		case <-ticker.C:
-			lm := make([]Listen, len(listenMap))
-			i := 0
 			for l := range listenMap {
-				lm[i] = listenMap[l]
-				i++
+				old := bson.M{"id": listenMap[l].Port}
+				newListen := bson.M{"$set": bson.M{"rate": listenMap[l].Rate}}
+				err := u.Update(old, newListen)
+				if err != nil {
+					log.Println(err.Error())
+				}
+			}
+		case pp := <-PasswdChan:
+			if len(PassMap) == 0 {
+				PassMap = make(map[string]UserPass)
 			}
 
-			lb := &ListenBak{
-				Lb: lm,
-			}
-
-			data, err := json.Marshal(lb)
-			if err != nil {
-				golog.Error(err.Error())
-			}
-
-			err = ioutil.WriteFile(config+"/user.json", data, 0600)
-			if err != nil {
-				golog.Error(err.Error())
+			if pp.Password == "" {
+				err := u.Remove(bson.M{"id": pp.Port})
+				if err != nil {
+					log.Println("Remove User Error:" + err.Error())
+				}
+			} else {
+				PassMap[pp.Port] = *pp
 			}
 		}
 	}
+	// config := os.Getenv("configdir")
+	// if config == "" {
+	// 	config = "/config"
+	// }
+
+	// ticker := time.NewTicker(1 * time.Minute)
+	// for {
+	// 	select {
+	// 	case <-ticker.C:
+	// 		lm := make([]Listen, len(listenMap))
+	// 		i := 0
+	// 		for l := range listenMap {
+	// 			lm[i] = listenMap[l]
+	// 			i++
+	// 		}
+
+	// 		lb := &ListenBak{
+	// 			Lb: lm,
+	// 		}
+
+	// 		data, err := json.Marshal(lb)
+	// 		if err != nil {
+	// 			golog.Error(err.Error())
+	// 		}
+
+	// 		err = ioutil.WriteFile(config+"/user.json", data, 0600)
+	// 		if err != nil {
+	// 			golog.Error(err.Error())
+	// 		}
+	// 	}
+	// }
 }
 
 // KillUserPass 当断开链接时，一并删除其口令

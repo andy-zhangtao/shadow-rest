@@ -39,7 +39,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	email := `<h1>Your account info is belowing:</h1> <h3> <br/> encrypt:aes-256-cfb <br/><br/> ` + conf.Port + `:` + conf.Password + ` <br/><br/> Rate:` + strconv.Itoa(conf.Rate) + `KB <br/><br/> Expriy:` + conf.Expriy + `D <br/><br/> <h2/> `
+	email := `<h1>创建成功,用户信息如下:</h1> <h3> <br/> 加密方式:aes-256-cfb <br/><br/> ` + conf.Port + `:` + conf.Password + ` <br/><br/> 流量限制:` + strconv.Itoa(conf.Rate) + `KB <br/><br/> 过期时间:` + conf.Expriy + `D <br/><br/> <h2/> `
 	err = ss.SendEmail(email, conf.Email)
 	if err != nil {
 		Sandstorm.HTTPSuccess(w, conf.Port+":"+conf.Password+" "+err.Error())

@@ -37,7 +37,7 @@ var config *ss.Config
 var backConfig *ss.Config
 
 func main() {
-	log.SetOutput(os.Stdout)
+	// log.SetOutput(os.Stdout)
 
 	// debug := ss.GetDebug()
 	var cmdConfig ss.Config
@@ -61,7 +61,6 @@ func main() {
 	}
 
 	// ss.SetDebug(debug)
-
 	if strings.HasSuffix(cmdConfig.Method, "-auth") {
 		cmdConfig.Method = cmdConfig.Method[:len(cmdConfig.Method)-5]
 		cmdConfig.Auth = true
@@ -126,7 +125,7 @@ func main() {
 	go ss.IsAboveRate()
 	// 用户数据持久化
 	go ss.Persistence()
-	go ss.PersistencePasswd()
+	// go ss.PersistencePasswd()
 
 	// 重新加载配置文件
 	go waitSignal(configFile, config)
@@ -144,11 +143,8 @@ func main() {
 
 	r.HandleFunc("/version", handler.GetVersion).Methods(http.MethodGet)
 
-	p := mux.NewRouter()
-	p.HandleFunc("/proxy", handler.ProxyConnHandler).Methods(http.MethodGet)
-	go func() {
-		log.Println(http.ListenAndServe(":8001", p))
-	}()
+	r.HandleFunc("/proxy", handler.ProxyConnHandler).Methods(http.MethodGet)
+	r.HandleFunc("/proxy/{id}", handler.ProxyInfo).Methods(http.MethodGet)
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})

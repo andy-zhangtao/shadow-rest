@@ -4,6 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
+
+	"github.com/andy-zhangtao/shadow-rest/shadowsocks/db"
+
+	"github.com/andy-zhangtao/shadow-rest/shadowsocks/util"
+
+	mgo "gopkg.in/mgo.v2"
 
 	// "log"
 	"os"
@@ -35,6 +42,8 @@ type Config struct {
 
 var readTimeout time.Duration
 var listenBakConf map[string]Listen
+
+var mongoSession *mgo.Session
 
 // GetServerArray 获取当前所有服务参数
 func (config *Config) GetServerArray() []string {
@@ -137,54 +146,82 @@ func UpdateConfig(old, new *Config) {
 
 // ParseBackConfig 解析备份配置文件数据
 func ParseBackConfig(config *Config) error {
-	con := os.Getenv("configdir")
-	if con == "" {
-		con = "/config"
+	if mongoSession == nil {
+		mongoSession = db.GetMongo()
 	}
 
-	// 解析口令配置文件
-	file, err := os.Open(con + "/passwd.json") // For read access.
+	var user []User
+	u := mongoSession.DB(os.Getenv(util.MONGODB)).C("user")
+	err := u.Find(nil).All(&user)
 	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	data, err := ioutil.ReadAll(file)
-	if err != nil {
-		return err
-	}
-
-	up := &UserPassBack{}
-	if err = json.Unmarshal(data, up); err != nil {
 		return err
 	}
 
 	pb := make(map[string]string)
-	for _, b := range up.Upb {
-		pb[b.Port] = b.Password
+	listenBakConf = make(map[string]Listen)
+
+	for _, us := range user {
+		log.Println(us)
+		pb[us.ID] = us.Password
+		listenBakConf[us.ID] = Listen{
+			Port:       us.ID,
+			Rate:       us.Rate,
+			ExpiryDate: us.Expriy,
+			RateLimit:  us.RateLimit,
+			Email:      us.Email,
+		}
 	}
 
 	config.PortPassword = pb
 
-	// 解析网络备份文件
-	file, err = os.Open(con + "/user.json") // For read access.
-	if err != nil {
-		return err
-	}
+	// con := os.Getenv("configdir")
+	// if con == "" {
+	// 	con = "/config"
+	// }
 
-	data, err = ioutil.ReadAll(file)
-	if err != nil {
-		return err
-	}
+	// // 解析口令配置文件
+	// file, err := os.Open(con + "/passwd.json") // For read access.
+	// if err != nil {
+	// 	return err
+	// }
+	// defer file.Close()
 
-	lb := &ListenBak{}
-	if err = json.Unmarshal(data, lb); err != nil {
-		return err
-	}
+	// data, err := ioutil.ReadAll(file)
+	// if err != nil {
+	// 	return err
+	// }
 
-	listenBakConf = make(map[string]Listen)
-	for _, l := range lb.Lb {
-		listenBakConf[l.Port] = l
-	}
+	// up := &UserPassBack{}
+	// if err = json.Unmarshal(data, up); err != nil {
+	// 	return err
+	// }
+
+	// pb := make(map[string]string)
+	// for _, b := range up.Upb {
+	// 	pb[b.Port] = b.Password
+	// }
+
+	// config.PortPassword = pb
+
+	// // 解析网络备份文件
+	// file, err = os.Open(con + "/user.json") // For read access.
+	// if err != nil {
+	// 	return err
+	// }
+
+	// data, err = ioutil.ReadAll(file)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// lb := &ListenBak{}
+	// if err = json.Unmarshal(data, lb); err != nil {
+	// 	return err
+	// }
+
+	// listenBakConf = make(map[string]Listen)
+	// for _, l := range lb.Lb {
+	// 	listenBakConf[l.Port] = l
+	// }
 	return nil
 }

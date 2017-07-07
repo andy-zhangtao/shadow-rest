@@ -3,11 +3,10 @@ package shadowsocks
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/andy-zhangtao/golog"
 
 	"github.com/andy-zhangtao/shadow-rest/configure"
 )
@@ -116,11 +115,11 @@ func IsAboveRate() {
 					// 0 表示无限制
 					if l.RateLimit != 0 {
 						if l.Rate >= l.RateLimit {
-							golog.Debug(l.Port, "流量超限需要被关闭")
+							log.Println(l.Port, "流量超限需要被关闭")
 							l.listen.Close()
 							delete(listenMap, p)
 							KillUserPass(l.Port)
-							golog.Debug(l.Port, "被关闭", l.Rate, l.RateLimit)
+							log.Println(l.Port, "被关闭", l.Rate, l.RateLimit)
 							SendEmail(l.Port+" Will be closed. Curreny Rate:"+strconv.Itoa(l.Rate)+" Max Rate:"+strconv.Itoa(l.RateLimit), l.Email)
 						}
 					}

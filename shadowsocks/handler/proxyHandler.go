@@ -2,15 +2,57 @@ package handler
 
 import (
 	"Sandstorm"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+
+	ss "github.com/andy-zhangtao/shadow-rest/shadowsocks"
+	"github.com/gorilla/mux"
 )
+
+/**
+ * Created with VScode.
+ * User: andy.zhangtao <ztao8607@gmail.com>
+ * Date: 17-07-06
+ * Time: 11:03
+ * 处理代理请求
+ */
 
 type Proxy struct {
 	URI string `json:"uri"`
 }
 
+// ProxyInfo 获取代理服务信息
+// 返回可以适合直接输出QRcode的字符串
+func ProxyInfo(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	if id == "" {
+		Sandstorm.HTTPError(w, "Need Proxy ID", http.StatusInternalServerError)
+		return
+	}
+
+	var u ss.User
+	keys, err := ss.GetRate()
+	if err != nil {
+		Sandstorm.HTTPError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	for _, k := range keys {
+		if k.ID == id {
+			u = k
+		}
+	}
+
+	if u.ID == "" {
+		Sandstorm.HTTPError(w, "Can Not Find this Proxy ID", http.StatusInternalServerError)
+		return
+	}
+
+	content, _ := json.Marshal(u)
+
+	Sandstorm.HTTPSuccess(w, string(content))
+}
 func ProxyConnHandler(w http.ResponseWriter, r *http.Request) {
 	uri := r.URL.Query().Get("URI")
 	// proxy := new(Proxy)
