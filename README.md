@@ -13,16 +13,22 @@ shadowsocks-go version: 1.1.5  shadow-rest version: 0.1.X [![Build Status](https
 
 * User API
 
-| Endpoint | Usage |
-| -------- | ----- |
-| /user/all | Get all the proxy |
-| /user/stop/{ports} | Stop specify proxy |
-| /user/restart | Restart specify proxy |
-| /user/expiry | Modify specify proxy expiry date |
-| /user/rate | Get all the proxy rate |
-| /user/info | Get all the proxy info |
-| /user/new | Create a new user |
+| Endpoint | Usage | Methods |
+| -------- | ----- | ------- |
+| /user/all | Get all the proxy | GET|
+| /user/stop/{ports} | Stop specify proxy | DELETE |
+| /user/restart | Restart specify proxy | PUT |
+| /user/expiry | Modify specify proxy expiry date | PUT |
+| /user/rate | Get all the proxy rate | GET |
+| /user/info | Get all the proxy info | GET |
+| /user/new | Create a new user | POST |
 
+* Proxy API
+
+| Endpoint | Usage | Methods |
+| -------- | ----- | ------- |
+| /proxy/{id} | Get specify proxy user info | GET |
+ 
 * Misc API
 
 | Endpoint | Usage |
