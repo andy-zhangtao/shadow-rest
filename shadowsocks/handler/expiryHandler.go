@@ -2,14 +2,14 @@ package handler
 
 import (
 	"encoding/json"
+	"github.com/andy-zhangtao/shadow-rest/shadowsocks/util"
+	
 	"io/ioutil"
 	"net/http"
-
+	
 	"github.com/andy-zhangtao/shadow-rest/configure"
-
+	
 	ss "github.com/andy-zhangtao/shadow-rest/shadowsocks"
-
-	"github.com/andy-zhangtao/Sandstorm"
 )
 
 /**
@@ -31,26 +31,26 @@ func SetExpiryHandler(w http.ResponseWriter, r *http.Request) {
 	conf := new(Expiry)
 	content, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		Sandstorm.HTTPError(w, err.Error(), http.StatusInternalServerError)
+		util.HTTPError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	
 	err = json.Unmarshal(content, &conf)
 	if err != nil {
-		Sandstorm.HTTPError(w, err.Error(), http.StatusInternalServerError)
+		util.HTTPError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	
 	if conf.Port == "" {
-		Sandstorm.HTTPError(w, configure.NOPORT, http.StatusInternalServerError)
+		util.HTTPError(w, configure.NOPORT, http.StatusInternalServerError)
 		return
 	}
-
+	
 	err = ss.SetExpiry(conf.Port, conf.Expiry)
 	if err != nil {
-		Sandstorm.HTTPError(w, err.Error(), http.StatusInternalServerError)
+		util.HTTPError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	Sandstorm.HTTPSuccess(w, "OK")
+	
+	util.HTTPSuccess(w, "OK")
 }

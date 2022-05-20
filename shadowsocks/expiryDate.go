@@ -3,10 +3,10 @@ package shadowsocks
 import (
 	"errors"
 	"time"
-
+	
 	"github.com/andy-zhangtao/shadow-rest/configure"
-
-	"github.com/andy-zhangtao/golog"
+	
+	golog "github.com/sirupsen/logrus"
 )
 
 /**
@@ -65,10 +65,10 @@ func SetExpiry(port string, d string) error {
 	if l.Port == "" {
 		return errors.New(configure.PORTNOTEXIST)
 	}
-
+	
 	l.ExpiryDate = d
-
+	
 	listenMap[port] = l
-
+	
 	return nil
 }

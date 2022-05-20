@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/andy-zhangtao/shadow-rest/shadowsocks/util"
 	"log"
 	"net/http"
 	"os"
@@ -10,10 +11,10 @@ import (
 	"runtime"
 	"strings"
 	"syscall"
-
+	
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-
+	
 	ss "github.com/andy-zhangtao/shadow-rest/shadowsocks"
 	"github.com/andy-zhangtao/shadow-rest/shadowsocks/handler"
 )
@@ -38,12 +39,12 @@ var backConfig *ss.Config
 
 func main() {
 	// log.SetOutput(os.Stdout)
-
+	
 	// debug := ss.GetDebug()
 	var cmdConfig ss.Config
 	var printVer bool
 	var core int
-
+	
 	flag.BoolVar(&printVer, "version", false, "print version")
 	flag.StringVar(&configFile, "c", "config.json", "specify config file")
 	flag.StringVar(&cmdConfig.Password, "k", "", "password")
@@ -52,20 +53,20 @@ func main() {
 	flag.StringVar(&cmdConfig.Method, "m", "", "encryption method, default: aes-256-cfb")
 	flag.IntVar(&core, "core", 0, "maximum number of CPU cores to use, default is determinied by Go runtime")
 	// flag.BoolVar((*bool)(&debug), "d", false, "print debug message")
-
+	
 	flag.Parse()
-
+	
 	if printVer {
 		ss.PrintVersion()
 		os.Exit(0)
 	}
-
+	
 	// ss.SetDebug(debug)
 	if strings.HasSuffix(cmdConfig.Method, "-auth") {
 		cmdConfig.Method = cmdConfig.Method[:len(cmdConfig.Method)-5]
 		cmdConfig.Auth = true
 	}
-
+	
 	var err error
 	config, err = ss.ParseConfig(configFile)
 	if err != nil {
@@ -77,12 +78,12 @@ func main() {
 	} else {
 		ss.UpdateConfig(config, &cmdConfig)
 	}
-
+	
 	sa := config.GetServerArray()
 	if len(sa) > 1 {
 		ss.GlobaIP = sa[0]
 	}
-
+	
 	if config.Method == "" {
 		config.Method = "aes-256-cfb"
 	}
@@ -96,25 +97,25 @@ func main() {
 	if core > 0 {
 		runtime.GOMAXPROCS(core)
 	}
-
+	
 	ss.Minport = config.Minport
 	ss.Maxport = config.Maxport
-
+	
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
 	}()
-
+	
 	err = ss.ParseBackConfig(config)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 	}
-
+	
 	for port, password := range config.PortPassword {
 		go ss.Run(port, password, config.Method, config.Auth)
 	}
-
+	
 	// 统计端口链接信息
 	go ss.HandleListen()
 	// 统计端口数据流量
@@ -126,12 +127,12 @@ func main() {
 	// 用户数据持久化
 	go ss.Persistence()
 	// go ss.PersistencePasswd()
-
+	
 	// 重新加载配置文件
 	go waitSignal(configFile, config)
-
+	
 	r := mux.NewRouter()
-
+	
 	r.HandleFunc("/user/all", handler.GetListenHandler).Methods(http.MethodGet)
 	r.HandleFunc("/user/stop/{ports}", handler.DeleteListenHandler).Methods(http.MethodDelete)
 	r.HandleFunc("/user/restart", handler.RestartListenHandler).Methods(http.MethodPut)
@@ -140,13 +141,17 @@ func main() {
 	r.HandleFunc("/user/rate", handler.GetRateHandler).Methods(http.MethodGet)
 	r.HandleFunc("/user/rate", handler.SetRateHandler).Methods(http.MethodPut)
 	r.HandleFunc("/user/new", handler.CreateUserHandler).Methods(http.MethodPost)
-
+	
 	r.HandleFunc("/version", handler.GetVersion).Methods(http.MethodGet)
-
+	
 	r.HandleFunc("/proxy", handler.ProxyConnHandler).Methods(http.MethodGet)
 	r.HandleFunc("/proxy/{id}", handler.ProxyInfo).Methods(http.MethodGet)
+	
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
+	
+	util.SetRoute(r)
+	
 	log.Println(http.ListenAndServe(":8000", handlers.CORS(headersOk, originsOk, methodsOk)(r)))
 }

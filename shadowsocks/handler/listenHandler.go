@@ -5,11 +5,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
-
+	
 	"github.com/andy-zhangtao/shadow-rest/configure"
 	ss "github.com/andy-zhangtao/shadow-rest/shadowsocks"
-
-	"github.com/andy-zhangtao/Sandstorm"
+	
+	"github.com/andy-zhangtao/shadow-rest/shadowsocks/util"
 	"github.com/gorilla/mux"
 )
 
@@ -32,21 +32,21 @@ type RestartL struct {
 // GetListenHandler 获取当前所有的网络链接
 func GetListenHandler(w http.ResponseWriter, r *http.Request) {
 	keys := ss.GetListen()
-
-	Sandstorm.HTTPSuccess(w, strings.Join(keys, ","))
+	
+	util.HTTPSuccess(w, strings.Join(keys, ","))
 }
 
 // DeleteListenHandler 删除指定网络链接
 func DeleteListenHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	port := vars["ports"]
-
+	
 	err := ss.KillListen(port)
 	if err != nil {
-		Sandstorm.HTTPError(w, err.Error(), http.StatusInternalServerError)
+		util.HTTPError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	Sandstorm.HTTPSuccess(w, "OK")
+	util.HTTPSuccess(w, "OK")
 }
 
 // RestartListenHandler 重启指定网络链接
@@ -54,33 +54,33 @@ func RestartListenHandler(w http.ResponseWriter, r *http.Request) {
 	conf := new(RestartL)
 	content, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		Sandstorm.HTTPError(w, err.Error(), http.StatusInternalServerError)
+		util.HTTPError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	
 	err = json.Unmarshal(content, &conf)
 	if err != nil {
-		Sandstorm.HTTPError(w, err.Error(), http.StatusInternalServerError)
+		util.HTTPError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	
 	if conf.Port == "" {
-		Sandstorm.HTTPError(w, configure.NOPORT, http.StatusInternalServerError)
+		util.HTTPError(w, configure.NOPORT, http.StatusInternalServerError)
 		return
 	}
-
+	
 	if ss.IsExists(conf.Port) {
-		Sandstorm.HTTPError(w, configure.HASPORT, http.StatusInternalServerError)
+		util.HTTPError(w, configure.HASPORT, http.StatusInternalServerError)
 		return
 	}
-
+	
 	if conf.Password == "" {
 		conf.Password = configure.DEFAULTPASSWD
 	}
-
+	
 	if conf.Method == "" {
 		conf.Method = configure.DEFAULTMETHOD
 	}
-
+	
 	go ss.Run(conf.Port, conf.Password, conf.Method, conf.Auth)
 }

@@ -9,13 +9,13 @@ import (
 	"strconv"
 	"sync"
 	"time"
-
+	
 	"gopkg.in/mgo.v2/bson"
-
+	
 	"github.com/andy-zhangtao/shadow-rest/shadowsocks/db"
 	"github.com/andy-zhangtao/shadow-rest/shadowsocks/util"
-
-	"github.com/andy-zhangtao/golog"
+	
+	golog "github.com/sirupsen/logrus"
 )
 
 /**
@@ -80,24 +80,24 @@ func CreatePasswd() string {
 		p := strconv.Itoa(r.Intn(10))
 		passwd = passwd + p
 	}
-
+	
 	return passwd
 }
 
 // getNextPort 获取下一个有效端口
 func getNextPort() string {
 	mutex.Lock()
-
+	
 	defer func() {
 		Currport++
 		mutex.Unlock()
 	}()
-
+	
 	for {
 		if Currport > Maxport {
 			Currport = Minport
 		}
-
+		
 		if listenMap[strconv.Itoa(Currport)].Port == "" {
 			return strconv.Itoa(Currport)
 		}
@@ -110,7 +110,7 @@ func Persistence() {
 	if mongoSession == nil {
 		mongoSession = db.GetMongo()
 	}
-
+	
 	u := mongoSession.DB(os.Getenv(util.MONGODB)).C("user")
 	ticker := time.NewTicker(1 * time.Minute)
 	for {
@@ -140,7 +140,7 @@ func Persistence() {
 			if len(PassMap) == 0 {
 				PassMap = make(map[string]UserPass)
 			}
-
+			
 			if pp.Password == "" {
 				err := u.Remove(bson.M{"id": pp.Port})
 				if err != nil {
@@ -155,7 +155,7 @@ func Persistence() {
 	// if config == "" {
 	// 	config = "/config"
 	// }
-
+	
 	// ticker := time.NewTicker(1 * time.Minute)
 	// for {
 	// 	select {
@@ -166,16 +166,16 @@ func Persistence() {
 	// 			lm[i] = listenMap[l]
 	// 			i++
 	// 		}
-
+	
 	// 		lb := &ListenBak{
 	// 			Lb: lm,
 	// 		}
-
+	
 	// 		data, err := json.Marshal(lb)
 	// 		if err != nil {
 	// 			golog.Error(err.Error())
 	// 		}
-
+	
 	// 		err = ioutil.WriteFile(config+"/user.json", data, 0600)
 	// 		if err != nil {
 	// 			golog.Error(err.Error())
@@ -197,37 +197,37 @@ func PersistencePasswd() {
 	if config == "" {
 		config = "/config"
 	}
-
+	
 	for {
 		select {
 		case pp := <-PasswdChan:
 			if len(PassMap) == 0 {
 				PassMap = make(map[string]UserPass)
 			}
-
+			
 			if pp.Password == "" {
 				// 删除
 				delete(PassMap, pp.Port)
 			} else {
 				PassMap[pp.Port] = *pp
 			}
-
+			
 			up := make([]UserPass, len(PassMap))
 			i := 0
 			for p := range PassMap {
 				up[i] = PassMap[p]
 				i++
 			}
-
+			
 			upb := &UserPassBack{
 				Upb: up,
 			}
-
+			
 			data, err := json.Marshal(upb)
 			if err != nil {
 				golog.Error(err.Error())
 			}
-
+			
 			err = ioutil.WriteFile(config+"/passwd.json", data, 0600)
 			if err != nil {
 				golog.Error(err.Error())
