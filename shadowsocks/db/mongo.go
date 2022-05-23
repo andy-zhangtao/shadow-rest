@@ -23,7 +23,7 @@ func init() {
 	if Session == nil {
 		login := &mgo.DialInfo{
 			Addrs:    []string{os.Getenv(util.MONGOURL)},
-			Timeout:  3600 * time.Second,
+			Timeout:  60 * time.Second,
 			Database: os.Getenv(util.MONGODB),
 			Username: os.Getenv(util.USERNAME),
 			Password: os.Getenv(util.PASSWORD),
