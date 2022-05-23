@@ -113,6 +113,8 @@ func main() {
 	ss.Minport = config.Minport
 	ss.Maxport = config.Maxport
 	
+	logrus.Debugf("minport: %d maxport: %d", ss.Minport, ss.Maxport)
+	
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Fprintln(os.Stderr, err)

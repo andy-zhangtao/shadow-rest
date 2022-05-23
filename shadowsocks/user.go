@@ -108,6 +108,7 @@ func getNextPort() string {
 // Persistence 用户数据持久化
 func Persistence() {
 	if mongoSession == nil {
+		return
 		mongoSession = db.GetMongo()
 	}
 	
