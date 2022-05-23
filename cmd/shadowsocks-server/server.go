@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/andy-zhangtao/shadow-rest/shadowsocks/util"
+	"github.com/sirupsen/logrus"
 	"log"
 	"net/http"
 	"os"
@@ -36,6 +37,7 @@ func waitSignal(configFile string, config *ss.Config) {
 var configFile string
 var config *ss.Config
 var backConfig *ss.Config
+var debug *bool
 
 func main() {
 	// log.SetOutput(os.Stdout)
@@ -45,6 +47,7 @@ func main() {
 	var printVer bool
 	var core int
 	
+	flag.BoolVar(debug, "debug", false, "enable debug model")
 	flag.BoolVar(&printVer, "version", false, "print version")
 	flag.StringVar(&configFile, "c", "config.json", "specify config file")
 	flag.StringVar(&cmdConfig.Password, "k", "", "password")
@@ -56,6 +59,10 @@ func main() {
 	
 	flag.Parse()
 	
+	if *debug {
+		logrus.SetLevel(logrus.DebugLevel)
+	}
+	
 	if printVer {
 		ss.PrintVersion()
 		os.Exit(0)
@@ -66,6 +73,8 @@ func main() {
 		cmdConfig.Method = cmdConfig.Method[:len(cmdConfig.Method)-5]
 		cmdConfig.Auth = true
 	}
+	
+	logrus.Debugf("cmdConfig: %+v", cmdConfig)
 	
 	var err error
 	config, err = ss.ParseConfig(configFile)
@@ -84,9 +93,12 @@ func main() {
 		ss.GlobaIP = sa[0]
 	}
 	
+	logrus.Debugf("server: %v", sa)
 	if config.Method == "" {
 		config.Method = "aes-256-cfb"
 	}
+	
+	logrus.Debugf("method: %s", config.Method)
 	if err = ss.CheckCipherMethod(config.Method); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -112,6 +124,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, err.Error())
 	}
 	
+	logrus.Debugf("ready for start proxy")
 	for port, password := range config.PortPassword {
 		go ss.Run(port, password, config.Method, config.Auth)
 	}
