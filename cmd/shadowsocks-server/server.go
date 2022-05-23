@@ -37,7 +37,6 @@ func waitSignal(configFile string, config *ss.Config) {
 var configFile string
 var config *ss.Config
 var backConfig *ss.Config
-var debug *bool
 
 func main() {
 	// log.SetOutput(os.Stdout)
@@ -46,8 +45,9 @@ func main() {
 	var cmdConfig ss.Config
 	var printVer bool
 	var core int
+	var debug bool
 	
-	flag.BoolVar(debug, "debug", false, "enable debug model")
+	flag.BoolVar(&debug, "debug", false, "enable debug model")
 	flag.BoolVar(&printVer, "version", false, "print version")
 	flag.StringVar(&configFile, "c", "config.json", "specify config file")
 	flag.StringVar(&cmdConfig.Password, "k", "", "password")
@@ -59,7 +59,7 @@ func main() {
 	
 	flag.Parse()
 	
-	if *debug {
+	if debug {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
 	
